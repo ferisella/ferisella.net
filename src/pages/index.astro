@@ -1,11 +1,966 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const highlights = await getCollection('highlights');
+const releases = await getCollection('releases');
+const collaborators = await getCollection('collaborators');
+
+const highlightsData = highlights[0]?.data.items || [];
+const releasesList = releases.sort((a, b) => b.data.year - a.data.year);
+const collaboratorsList = collaborators.sort((a, b) =>
+  a.data.name.localeCompare(b.data.name)
+);
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Fer Isella. Pianista, productor, cofundador de limbo/. Argentino en Madrid.">
+<title>Fer Isella</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,30..100;1,9..144,300..700,30..100&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F4EFE4;
+    --bg-alt: #EDE7D9;
+    --ink: #1A1713;
+    --ink-soft: #4A443B;
+    --ink-mute: #8F887A;
+    --rule: #C9C1AE;
+    --accent: #9C3B1F;
+    --accent-soft: #B54B2C;
+    --serif: 'Spectral', Georgia, serif;
+    --display: 'Fraunces', 'Spectral', Georgia, serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  [data-theme="dark"] {
+    --bg: #13110D;
+    --bg-alt: #1A1814;
+    --ink: #E8E2D4;
+    --ink-soft: #B8B0A0;
+    --ink-mute: #6A6458;
+    --rule: #2F2B24;
+    --accent: #D96B3E;
+    --accent-soft: #E57B4E;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+    transition: background 400ms ease, color 400ms ease;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--accent); color: var(--bg); }
+
+  /* ---------- Navegación ---------- */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 22px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 50;
+    mix-blend-mode: difference;
+    pointer-events: none;
+  }
+  .nav > * { pointer-events: auto; }
+  .nav-brand {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    color: #FFF;
+    text-decoration: none;
+    font-variation-settings: "opsz" 48, "SOFT" 50;
+  }
+  .nav-brand em {
+    font-style: italic;
+    font-weight: 300;
+  }
+  .nav-tools {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #FFF;
+  }
+  .nav-menu {
+    display: flex;
+    gap: 26px;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #FFF;
+  }
+  .nav-menu a {
+    color: inherit;
+    text-decoration: none;
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+    transition: border-color 180ms ease;
+  }
+  .nav-menu a:hover { border-bottom-color: #FFF; }
+  .nav-tools button {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+    transition: border-color 180ms ease;
+  }
+  .nav-tools button:hover { border-bottom-color: #FFF; }
+  .nav-tools .sep { opacity: 0.4; }
+  .nav-tools .active { border-bottom-color: #FFF; }
+
+  /* ---------- Estructura ---------- */
+  main {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  section {
+    padding: 12vh 0;
+    border-top: 1px solid var(--rule);
+    position: relative;
+  }
+  section:first-of-type { border-top: none; padding-top: 18vh; }
+
+  .section-head {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 40px;
+    margin-bottom: 70px;
+    align-items: baseline;
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    padding-top: 14px;
+  }
+  .section-num::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: clamp(34px, 5vw, 58px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-variation-settings: "opsz" 144, "SOFT" 30;
+  }
+  .section-title em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 300;
+  }
+
+  .section-body {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 40px;
+  }
+  .section-body > .meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    line-height: 1.8;
+  }
+  .section-body > .content {
+    max-width: 64ch;
+  }
+  .section-body > .content > p + p { margin-top: 1.2em; }
+  .section-body > .content p {
+    font-size: 18px;
+    line-height: 1.7;
+  }
+
+  /* ---------- INTRO ---------- */
+  #intro {
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 18vh;
+    padding-bottom: 10vh;
+    border-top: none;
+  }
+  .intro-lead {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: clamp(30px, 4.6vw, 62px);
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    max-width: 22ch;
+    margin-bottom: 60px;
+    font-variation-settings: "opsz" 144, "SOFT" 20;
+  }
+  .intro-lead .italic {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .intro-lead .light {
+    color: var(--ink-soft);
+  }
+  .intro-ekg {
+    width: 100%;
+    max-width: 520px;
+    height: 48px;
+    margin-bottom: 72px;
+    opacity: 0.85;
+  }
+  .intro-ekg path {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1200;
+    stroke-dashoffset: 1200;
+    animation: draw 5.2s cubic-bezier(.7,0,.3,1) 0.6s forwards, pulse 3.6s ease-in-out 6s infinite;
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes pulse { 0%,100% { opacity: 0.85; } 50% { opacity: 0.35; } }
+
+  .intro-threads {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+    max-width: 900px;
+    margin-top: 20px;
+    border-top: 1px solid var(--rule);
+    padding-top: 30px;
+  }
+  .thread {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .thread-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .thread-label::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .thread-title {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: 22px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+    font-style: italic;
+    font-variation-settings: "opsz" 48;
+  }
+  .thread-meta {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ink-soft);
+    font-style: normal;
+  }
+  .thread:hover .thread-title { color: var(--accent); }
+  .thread { transition: none; }
+  .thread-title { transition: color 200ms ease; }
+
+  /* ---------- BIO ---------- */
+  .bio-scene {
+    margin-bottom: 2.2em;
+  }
+  .bio-scene h3 {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .bio-scene p {
+    font-size: 18px;
+    line-height: 1.7;
+  }
+  .bio-scene p + p { margin-top: 0.9em; }
+
+  .bio-collabs {
+    margin-top: 70px;
+    padding-top: 38px;
+    border-top: 1px solid var(--rule);
+    max-width: 820px;
+  }
+  .collab-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+
+  /* ---------- MÚSICA ---------- */
+  .discog {
+    display: grid;
+    gap: 0;
+  }
+  .release {
+    display: grid;
+    grid-template-columns: 70px 1fr auto;
+    gap: 28px;
+    align-items: baseline;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+  }
+  .release:first-child { border-top: 1px solid var(--rule); }
+  .release.featured {
+    background: var(--bg-alt);
+    margin-left: -24px;
+    margin-right: -24px;
+    padding-left: 24px;
+    padding-right: 24px;
+    border-bottom-color: var(--rule);
+  }
+  .release.featured .release-title { color: var(--accent); }
+  .release-year {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-mute);
+    letter-spacing: 0.05em;
+  }
+  .release-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .release-title {
+    font-family: var(--display);
+    font-weight: 300;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    font-variation-settings: "opsz" 72;
+  }
+  .release-note {
+    font-family: var(--serif);
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    max-width: 64ch;
+  }
+  .release-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    white-space: nowrap;
+  }
+  .release-tag.featured-tag {
+    color: var(--accent);
+  }
+
+  .prod-block {
+    margin-top: 80px;
+  }
+  .prod-block-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .prod-list {
+    list-style: none;
+    columns: 2;
+    column-gap: 60px;
+    font-family: var(--serif);
+    font-size: 15.5px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+  }
+  .prod-list li {
+    break-inside: avoid;
+  }
+  .prod-list em {
+    color: var(--ink);
+    font-style: italic;
+    font-family: var(--display);
+    font-variation-settings: "opsz" 48;
+  }
+
+  /* ---------- LIMBO ---------- */
+  .pullquote {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: clamp(24px, 3vw, 34px);
+    line-height: 1.25;
+    font-style: italic;
+    color: var(--accent);
+    max-width: 22ch;
+    margin: 60px 0;
+    padding-left: 24px;
+    border-left: 1px solid var(--accent);
+    font-variation-settings: "opsz" 144, "SOFT" 30;
+  }
+  .inline-link {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 1px;
+    transition: border-color 200ms ease, color 200ms ease;
+  }
+  .inline-link:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ---------- ESCRITURA ---------- */
+  .essays {
+    display: grid;
+    gap: 0;
+  }
+  .essay {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 40px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--rule);
+    text-decoration: none;
+    color: inherit;
+    transition: background 180ms ease;
+  }
+  .essay:first-child { border-top: 1px solid var(--rule); }
+  .essay:hover { background: var(--bg-alt); margin: 0 -24px; padding: 32px 24px; }
+  .essay-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    line-height: 1.6;
+  }
+  .essay-meta .topic { color: var(--accent); display: block; margin-top: 6px; }
+  .essay-body h4 {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: 24px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    font-style: italic;
+    margin-bottom: 10px;
+    font-variation-settings: "opsz" 72;
+  }
+  .essay-body p {
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 58ch;
+  }
+
+  .substack-cta {
+    margin-top: 60px;
+    padding: 38px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  .substack-cta p {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: clamp(22px, 2.4vw, 30px);
+    line-height: 1.25;
+    max-width: 28ch;
+    font-variation-settings: "opsz" 144;
+  }
+  .substack-cta p em { color: var(--accent); font-style: italic; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--ink);
+    padding: 14px 22px;
+    text-decoration: none;
+    transition: all 200ms ease;
+  }
+  .btn:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .btn .arrow {
+    display: inline-block;
+    transition: transform 200ms ease;
+  }
+  .btn:hover .arrow { transform: translateX(4px); }
+
+  /* ---------- AFILIACIONES ---------- */
+  .affil-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+  .affil-list li {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 20px;
+  }
+  .affil-name {
+    font-family: var(--display);
+    font-weight: 300;
+    font-style: italic;
+    font-size: 18px;
+    font-variation-settings: "opsz" 48;
+  }
+  .affil-role {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    border-top: 1px solid var(--rule);
+    margin-top: 0;
+    padding: 80px 40px 40px;
+    max-width: 1240px;
+    margin: 0 auto;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 80px;
+  }
+  .footer-col h5 {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .footer-col ul {
+    list-style: none;
+  }
+  .footer-col li {
+    margin-bottom: 8px;
+  }
+  .footer-col a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 180ms ease;
+  }
+  .footer-col a:hover { color: var(--accent); }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 30px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  .footer-bottom a {
+    color: var(--ink-mute);
+    text-decoration: none;
+  }
+  .footer-bottom a:hover { color: var(--accent); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px) {
+    .nav { padding: 16px 24px; }
+    .nav-menu { display: none; }
+    main { padding: 0 24px; }
+    footer { padding: 60px 24px 30px; }
+    .section-head, .section-body, .essay {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .section-body > .meta { order: 2; padding-top: 20px; border-top: 1px solid var(--rule); margin-top: 20px; }
+    .intro-threads { grid-template-columns: 1fr; gap: 28px; }
+    .release { grid-template-columns: 60px 1fr; gap: 16px; }
+    .release-tag { grid-column: 2; font-size: 9px; margin-top: 2px; }
+    .prod-list { columns: 1; }
+    .affil-list { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; gap: 36px; }
+    .footer-bottom { flex-direction: column; gap: 12px; align-items: flex-start; }
+    section { padding: 8vh 0; }
+    #intro { padding-top: 14vh; min-height: 80vh; }
+  }
+
+  /* ---------- Entrada animada ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 900ms ease, transform 900ms ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#intro" class="nav-brand">Fer Isella</a>
+  <div class="nav-menu">
+    <a href="#bio" data-es="Bio" data-en="Bio">Bio</a>
+    <a href="#musica" data-es="Música" data-en="Music">Music</a>
+    <a href="#limbo">limbo/</a>
+    <a href="#" target="_blank" rel="noopener" data-es="Podcast" data-en="Podcast">Podcast</a>
+  </div>
+  <div class="nav-tools">
+    <button id="lang-toggle" data-lang="EN">EN / ES</button>
+    <span class="sep">·</span>
+    <button id="theme-toggle">Night</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ============ INTRO ============ -->
+  <section id="intro">
+    <h1 class="intro-lead">
+      <span data-es="Soy pianista, productor y tecnólogo." data-en="Pianist, producer, technologist.">Pianist, producer, technologist.</span><br>
+      <span class="italic" data-es="Argentino en Madrid." data-en="Argentine in Madrid.">Argentine in Madrid.</span><br>
+      <span class="light" data-es="Hace veinte años cofundé limbo/, infraestructura independiente para la música hecha por humanos." data-en="Twenty years ago I co-founded limbo/, independent infrastructure for human-made music.">Twenty years ago I co-founded limbo/, independent infrastructure for human-made music.</span>
+    </h1>
+
+    <svg class="intro-ekg" viewBox="0 0 520 48" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,24 L80,24 L95,24 L105,12 L115,36 L125,6 L135,40 L145,24 L200,24 L215,24 L225,20 L235,28 L245,24 L310,24 L325,24 L335,14 L345,34 L355,10 L365,38 L375,24 L430,24 L445,24 L455,22 L465,26 L475,24 L520,24"/>
+    </svg>
+
+    <div class="intro-threads">
+      {highlightsData.map((item) => (
+        <a href={item.link || '#'} class="thread">
+          <div class="thread-label">{item.title}</div>
+          <div class="thread-title">{item.title}</div>
+          <div class="thread-meta">{item.description}</div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ BIO ============ -->
+  <section id="bio">
+    <div class="section-head">
+      <div class="section-num">01 / <span data-es="Bio" data-en="Bio">Bio</span></div>
+      <h2 class="section-title" data-es="Cuatro ciudades, una misma obsesión." data-en="Four cities, one obsession.">Four cities, one obsession.</h2>
+    </div>
+    <div class="section-body">
+      <div class="meta">
+        1975 · BA<br>
+        Berklee · NY<br>
+        2006 · limbo/<br>
+        2021 · Madrid
+      </div>
+      <div class="content">
+        <div class="bio-scene">
+          <h3 data-es="Buenos Aires" data-en="Buenos Aires">Buenos Aires</h3>
+          <p data-es="Crecí en una casa donde la música no era oficio: era la forma en que se entendía el mundo. Mi padre, César Isella, cantó con Los Fronterizos, escribió «Canción con todos» y fue uno de los fundadores del Nuevo Cancionero. Durante la dictadura fue secuestrado y torturado. Sobrevivió. Aprendí temprano que una canción puede ser refugio y puede ser prueba. Que la memoria se transmite en los intervalos." data-en="I grew up in a house where music wasn't a trade; it was the way the world was understood. My father, César Isella, sang with Los Fronterizos, wrote 'Canción con todos,' and helped found the Nuevo Cancionero movement. He was kidnapped and tortured during the dictatorship. He survived. I learned early that a song can be a refuge and a piece of evidence. That memory travels through intervals.">I grew up in a house where music wasn't a trade; it was the way the world was understood. My father, César Isella, sang with Los Fronterizos, wrote 'Canción con todos,' and helped found the Nuevo Cancionero movement. He was kidnapped and tortured during the dictatorship. He survived. I learned early that a song can be a refuge and a piece of evidence. That memory travels through intervals.</p>
+        </div>
+        <div class="bio-scene">
+          <h3 data-es="Berklee · Nueva York" data-en="Berklee · New York">Berklee · New York</h3>
+          <p data-es="Una beca Fulbright me llevó a estudiar composición de jazz en Berklee. Después, siete años tocando teclados y produciendo discos en Nueva York: Tonic, Nublu, Bowery Ballroom, Miho Hatori, Joy Askew, Karina Zeviani. En paralelo, producciones para Sony y Universal: discos de oro y platino, millones de copias, una nominación al Latin Grammy. Aprendí a hacer discos y aprendí a desconfiar de los discos que hace la industria." data-en="A Fulbright grant brought me to Berklee to study jazz composition. Then seven years playing keys and producing records in New York: Tonic, Nublu, Bowery Ballroom, Miho Hatori, Joy Askew, Karina Zeviani. In parallel, productions for Sony and Universal: gold and platinum records, millions of copies, a Latin Grammy nomination. I learned how to make records. I also learned to distrust the records the industry makes.">A Fulbright grant brought me to Berklee to study jazz composition. Then seven years playing keys and producing records in New York: Tonic, Nublu, Bowery Ballroom, Miho Hatori, Joy Askew, Karina Zeviani. In parallel, productions for Sony and Universal: gold and platinum records, millions of copies, a Latin Grammy nomination. I learned how to make records. I also learned to distrust the records the industry makes.</p>
+        </div>
+        <div class="bio-scene">
+          <h3 data-es="limbo/ · la década del 2000" data-en="limbo/ · the 2000s">limbo/ · the 2000s</h3>
+          <p data-es="Volví a Buenos Aires en 2005 y con Cinthia Novick fundamos limbo/. Ripeábamos CDs en una sola PC para iTunes. Fuimos una de las primeras empresas latinoamericanas en firmar con la tienda. En el camino fuimos sello, festival, agencia, distribuidora. El British Council me nombró dos veces Young Creative Entrepreneur of the Year. Coordiné música en el MICA durante cinco años. Cuando la pandemia nos sacó del aire, limbo/ se redefinió como infraestructura B2B: APIs, white-label, integraciones DDEX. Lo que empezó como un micro-sello hoy es la tubería invisible de otros." data-en="I came back to Buenos Aires in 2005 and co-founded limbo/ with Cinthia Novick. We ripped CDs on a single PC for iTunes. We were one of the first Latin American companies to sign with the store. Along the way we were a label, a festival, an agency, a distributor. The British Council named me Young Creative Entrepreneur of the Year twice. I ran the music sector at MICA for five years. When the pandemic cleared the air, limbo/ redefined itself as B2B infrastructure: APIs, white-label, DDEX integrations. What began as a micro-label is now invisible plumbing for others.">I came back to Buenos Aires in 2005 and co-founded limbo/ with Cinthia Novick. We ripped CDs on a single PC for iTunes. We were one of the first Latin American companies to sign with the store. Along the way we were a label, a festival, an agency, a distributor. The British Council named me Young Creative Entrepreneur of the Year twice. I ran the music sector at MICA for five years. When the pandemic cleared the air, limbo/ redefined itself as B2B infrastructure: APIs, white-label, DDEX integrations. What began as a micro-label is now invisible plumbing for others.</p>
+        </div>
+        <div class="bio-scene">
+          <h3 data-es="Madrid · el presente" data-en="Madrid · today">Madrid · today</h3>
+          <p data-es="Desde 2021 vivimos en Madrid. Soy padre de Dan y Sof. Toco todas las noches que puedo un Nord Grand, un Prophet Rev 2, un Moog semimodular, un Zen Delay. Estoy en el board de Merlin (2024-25), en el comité fundador de EarthPercent, y somos partners fundadores de Sounds Right, el proyecto que en 2025 ganó el Grand Prix de Cannes Lions por hacer de la naturaleza un artista acreditado en Spotify. Escribo todos los meses en The Music of Conversation. Construyo limbo/Chat. Publico My Heart. Lo de siempre: piano y código, a la vez." data-en="Since 2021 we live in Madrid. I'm a father to Dan and Sof. I play a Nord Grand, a Prophet Rev 2, a semi-modular Moog, a Zen Delay, every night I can. I sit on the Merlin board (2024-25), on the founding committee of EarthPercent, and we're founding partners of Sounds Right, the project that won the 2025 Cannes Lions Grand Prix for turning NATURE into a credited artist on Spotify. I write monthly on The Music of Conversation. I build limbo/Chat. I released My Heart. Same as ever: piano and code, at once.">Since 2021 we live in Madrid. I'm a father to Dan and Sof. I play a Nord Grand, a Prophet Rev 2, a semi-modular Moog, a Zen Delay, every night I can. I sit on the Merlin board (2024-25), on the founding committee of EarthPercent, and we're founding partners of Sounds Right, the project that won the 2025 Cannes Lions Grand Prix for turning NATURE into a credited artist on Spotify. I write monthly on The Music of Conversation. I build limbo/Chat. I released My Heart. Same as ever: piano and code, at once.</p>
+        </div>
+
+        <div class="bio-collabs">
+          <h3 class="collab-title" data-es="Con quién he trabajado" data-en="Who I've worked with">Who I've worked with</h3>
+          <ul class="affil-list">
+            {collaboratorsList.map((collab) => (
+              <li>
+                <span class="affil-name">{collab.data.name}</span>
+                <span
+                  class="affil-role"
+                  data-es={collab.data.role_es}
+                  data-en={collab.data.role_en}
+                >{collab.data.role_en}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MÚSICA ============ -->
+  <section id="musica">
+    <div class="section-head">
+      <div class="section-num">02 / <span data-es="Música" data-en="Music">Music</span></div>
+      <h2 class="section-title"><span data-es="Lo que he grabado y" data-en="What I've recorded and">What I've recorded and</span><em data-es="lo que he ayudado a grabar." data-en="what I've helped others record.">what I've helped others record.</em></h2>
+    </div>
+    <div class="section-body">
+      <div class="meta">
+        2007—2025<br>
+        <span data-es="Piano, ambient," data-en="Piano, ambient,">Piano, ambient,</span><br>
+        nu-jazz, folk<br>
+        <br>
+        Nord Grand<br>
+        Prophet Rev 2<br>
+        Moog · Zen Delay
+      </div>
+      <div class="content" style="max-width: none;">
+
+        <div class="discog">
+          {releasesList.map((release, index) => (
+            <article class={`release ${index === 0 ? 'featured' : ''}`}>
+              <div class="release-year">{release.data.year}</div>
+              <div class="release-main">
+                <div class="release-title">{release.data.title}</div>
+                {(release.data.note_es || release.data.note_en) && (
+                  <div
+                    class="release-note"
+                    data-es={release.data.note_es}
+                    data-en={release.data.note_en}
+                  >
+                    {release.data.note_en || release.data.note_es}
+                  </div>
+                )}
+              </div>
+              <div
+                class={`release-tag ${index === 0 ? 'featured-tag' : ''}`}
+                data-es={release.data.tag_es}
+                data-en={release.data.tag_en}
+              >
+                {release.data.tag_en || release.data.tag_es || 'Release'}
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div class="prod-block">
+          <div class="prod-block-title" data-es="Producciones para otros · selección" data-en="Productions for others · selected">Productions for others · selected</div>
+          <ul class="prod-list">
+            <li>Mercedes Sosa, <em>Ángel</em> (Universal, póstumo, 2014)</li>
+            <li>Soledad Pastorutti</li>
+            <li>Vera Spinetta</li>
+            <li>Guillermo Klein</li>
+            <li>Ramiro Flores</li>
+            <li>Marta Gómez</li>
+            <li>Real World Studios, <em>Producer Camp Vol. 1</em> (2021)</li>
+            <li>Mentor y mixer en SoundBetter</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LIMBO ============ -->
+  <section id="limbo">
+    <div class="section-head">
+      <div class="section-num">03 / <span data-es="limbo/ y tecnología" data-en="limbo/ and technology">limbo/ and technology</span></div>
+      <h2 class="section-title" data-es="Construí una tubería para que otros pudieran ser libres." data-en="I built plumbing so others could be free.">I built plumbing so others could be free.</h2>
+    </div>
+    <div class="section-body">
+      <div class="meta">
+        Desde 2006<br>
+        Bootstrapped<br>
+        <span data-es="Sin majors" data-en="No majors">No majors</span><br>
+        <span data-es="Sin VCs" data-en="No VCs">No VCs</span><br><br>
+        ~15 <span data-es="personas" data-en="people">people</span><br>
+        50+ DSPs<br>
+        Merlin · YouTube A
+      </div>
+      <div class="content">
+        <p data-es="limbo/ existe porque la música independiente no podía seguir alquilándole la infraestructura a sus propios competidores. Durante veinte años construimos tecnología B2B de distribución —APIs, white-label, Music Blocks modulares, royalty reporting, protección contra streaming artificial, un MCP server conversacional— para sellos, agregadores y plataformas que no quieren depender de una major para existir." data-en="limbo/ exists because independent music couldn't keep renting infrastructure from its own competitors. For twenty years we've been building B2B distribution technology (APIs, white-label, modular Music Blocks, royalty reporting, artificial-streaming protection, a conversational MCP server) for labels, aggregators, and platforms that refuse to depend on a major to exist.">limbo/ exists because independent music couldn't keep renting infrastructure from its own competitors. For twenty years we've been building B2B distribution technology (APIs, white-label, modular Music Blocks, royalty reporting, artificial-streaming protection, a conversational MCP server) for labels, aggregators, and platforms that refuse to depend on a major to exist.</p>
+
+        <p data-es="Somos bootstrapped. Sin majors, sin VCs, sin cuerdas. Pertenecemos a Merlin. Somos YouTube Tier A Partner. Clientes como Real World Studios, UN Live, EarthPercent. Lo importante no es la lista: es que cada uno eligió no firmar con nadie que en el futuro pudiera comprarlos." data-en="We're bootstrapped. No majors, no VCs, no strings. Members of Merlin. A YouTube Tier A Partner. Clients like Real World Studios, UN Live, EarthPercent. The list is not the point; the point is that each of them chose not to sign with anyone who might one day buy them.">We're bootstrapped. No majors, no VCs, no strings. Members of Merlin. A YouTube Tier A Partner. Clients like Real World Studios, UN Live, EarthPercent. The list is not the point; the point is that each of them chose not to sign with anyone who might one day buy them.</p>
+
+        <blockquote class="pullquote" data-es="«Own the infrastructure, or you're renting.»" data-en="«Own the infrastructure, or you're renting.»">«Own the infrastructure, or you're renting.»</blockquote>
+
+        <p data-es="La misión, declarada sin rodeos: hacer crecer el PIB global de la música independiente hecha por humanos. No ser el distribuidor más grande del mundo. Agrandar la torta entera." data-en="The mission, stated plainly: grow the global GDP of independent human-made music. Not to be the biggest distributor in the world. To grow the whole pie.">The mission, stated plainly: grow the global GDP of independent human-made music. Not to be the biggest distributor in the world. To grow the whole pie.</p>
+
+        <p data-es="En paralelo trabajo en Beatcoin Music, un musicverse DAO sobre Solana: mi hipótesis sobre cómo se verá la atribución de derechos en la post-IA. El blockchain no se adoptó cuando debía. Ya no está en discusión si hace falta: solo cuándo." data-en="In parallel I'm building Beatcoin Music, a musicverse DAO on Solana: my hypothesis for what rights attribution will look like after AI. The industry didn't adopt blockchain when it should have. It's no longer a question of whether it's needed, only when.">In parallel I'm building Beatcoin Music, a musicverse DAO on Solana: my hypothesis for what rights attribution will look like after AI. The industry didn't adopt blockchain when it should have. It's no longer a question of whether it's needed, only when.</p>
+
+        <p style="margin-top: 30px;" data-es="Para saber más sobre la empresa: <a href=&quot;https://limbomusic.com&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; class=&quot;inline-link&quot;>limbomusic.com</a>" data-en="More about the company: <a href=&quot;https://limbomusic.com&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; class=&quot;inline-link&quot;>limbomusic.com</a>">More about the company: <a href="https://limbomusic.com" target="_blank" rel="noopener" class="inline-link">limbomusic.com</a></p>
+      </div>
+    </div>
+  </section>
+
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h5 data-es="Escuchar" data-en="Listen">Listen</h5>
+      <ul>
+        <li><a href="#" target="_blank" rel="noopener">Spotify</a></li>
+        <li><a href="#" target="_blank" rel="noopener">Apple Music</a></li>
+        <li><a href="#" target="_blank" rel="noopener">Bandcamp</a></li>
+        <li><a href="#" target="_blank" rel="noopener">SoundCloud</a></li>
+        <li><a href="#" target="_blank" rel="noopener">YouTube</a></li>
+        <li><a href="#" target="_blank" rel="noopener">Deezer</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5 data-es="Leer · seguir" data-en="Read · follow">Read · follow</h5>
+      <ul>
+        <li><a href="#" target="_blank" rel="noopener">The Music of Conversation</a></li>
+        <li><a href="#" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="#" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="#" target="_blank" rel="noopener">X / Twitter</a></li>
+        <li><a href="#" target="_blank" rel="noopener">Discogs</a></li>
+        <li><a href="#" target="_blank" rel="noopener">SoundBetter</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5 data-es="Trabajo · contacto" data-en="Work · contact">Work · contact</h5>
+      <ul>
+        <li><a href="https://limbomusic.com" target="_blank" rel="noopener">limbomusic.com</a></li>
+        <li><a href="#" target="_blank" rel="noopener">Beatcoin Music</a></li>
+        <li><a href="mailto:hola@ferisella.com">hola@ferisella.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="year"></span> Fer Isella · Madrid</span>
+    <span data-es="Hecho a mano, sin plantilla." data-en="Hand-built, no template.">Hand-built, no template.</span>
+  </div>
+</footer>
+
+<script>
+  // Año
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Tema
+  const themeToggle = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  if (savedTheme === 'dark') root.setAttribute('data-theme', 'dark');
+  const updateThemeLabel = () => {
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    const lang = document.documentElement.lang;
+    themeToggle.textContent = isDark
+      ? (lang === 'es' ? 'Día' : 'Day')
+      : (lang === 'es' ? 'Noche' : 'Night');
+  };
+  updateThemeLabel();
+  themeToggle.addEventListener('click', () => {
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      root.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+    } else {
+      root.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+    }
+    updateThemeLabel();
+  });
+
+  // Idioma
+  const langToggle = document.getElementById('lang-toggle');
+  const applyLang = (lang) => {
+    document.documentElement.lang = lang === 'EN' ? 'en' : 'es';
+    document.querySelectorAll('[data-es][data-en]').forEach(el => {
+      const key = lang === 'EN' ? 'en' : 'es';
+      el.innerHTML = el.dataset[key];
+    });
+    langToggle.dataset.lang = lang;
+    langToggle.textContent = lang === 'ES' ? 'ES / EN' : 'EN / ES';
+    updateThemeLabel();
+  };
+  const savedLang = localStorage.getItem('lang');
+  const browserLang = (navigator.language || 'en').toLowerCase();
+  const initialLang = savedLang || (browserLang.startsWith('es') ? 'ES' : 'EN');
+  applyLang(initialLang);
+  langToggle.addEventListener('click', () => {
+    const current = langToggle.dataset.lang;
+    const next = current === 'ES' ? 'EN' : 'ES';
+    applyLang(next);
+    localStorage.setItem('lang', next);
+  });
+
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('section').forEach(s => {
+    s.classList.add('reveal');
+    io.observe(s);
+  });
+</script>
+
+</body>
+</html>
