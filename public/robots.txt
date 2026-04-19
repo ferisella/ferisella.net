@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ferisella.net/sitemap-index.xml
+
+# Content signals (EU Directive 2019/790, Article 4)
+# search: yes
+# ai-input: no
+# ai-train: no

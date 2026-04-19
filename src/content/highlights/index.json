@@ -3,17 +3,17 @@
     {
       "title": "My Heart",
       "description": "Album with remixes by Herbert, Dear, Ford, Lidell",
-      "link": "/musica#my-heart"
+      "link": "#musica"
     },
     {
       "title": "limbo/Chat",
       "description": "MCP server and custom LLM integrations",
-      "link": "/limbo"
+      "link": "#limbo"
     },
     {
       "title": "Forbidden Songs",
       "description": "Essay exploring music and storytelling",
-      "link": "/forbidden-songs"
+      "link": "https://themusicofconversation.substack.com"
     }
   ]
 }
