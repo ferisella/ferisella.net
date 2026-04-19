@@ -7,9 +7,12 @@ const collaborators = await getCollection('collaborators');
 
 const highlightsData = highlights[0]?.data.items || [];
 const releasesList = releases.sort((a, b) => b.data.year - a.data.year);
-const collaboratorsList = collaborators.sort((a, b) =>
-  a.data.name.localeCompare(b.data.name)
-);
+const allCollaborators = collaborators.sort((a, b) => a.data.name.localeCompare(b.data.name));
+const priorityNames = ['Brian Eno', 'Mercedes Sosa', 'Matthew Herbert', 'Matthew Dear', 'James Ellis Ford'];
+const collaboratorsList = [
+  ...priorityNames.map(name => allCollaborators.find(c => c.data.name === name)).filter(Boolean),
+  ...allCollaborators.filter(c => !priorityNames.includes(c.data.name)),
+];
 ---
 
 <!DOCTYPE html>
@@ -674,7 +677,7 @@ const collaboratorsList = collaborators.sort((a, b) =>
     <a href="#bio" data-es="Bio" data-en="Bio">Bio</a>
     <a href="#musica" data-es="Música" data-en="Music">Music</a>
     <a href="#limbo">limbo/</a>
-    <a href="#" target="_blank" rel="noopener" data-es="Podcast" data-en="Podcast">Podcast</a>
+    <a href="https://themusicofconversation.substack.com/subscribe" target="_blank" rel="noopener" data-es="Podcast" data-en="Podcast">Podcast</a>
   </div>
   <div class="nav-tools">
     <button id="lang-toggle" data-lang="EN">EN / ES</button>
@@ -712,47 +715,66 @@ const collaboratorsList = collaborators.sort((a, b) =>
   <section id="bio">
     <div class="section-head">
       <div class="section-num">01 / <span data-es="Bio" data-en="Bio">Bio</span></div>
-      <h2 class="section-title" data-es="Cuatro ciudades, una misma obsesión." data-en="Four cities, one obsession.">Four cities, one obsession.</h2>
+      <h2 class="section-title" data-es="Piano y código" data-en="Piano y código">Piano y código</h2>
     </div>
     <div class="section-body">
       <div class="meta">
         1975 · BA<br>
         Berklee · NY<br>
         2006 · limbo/<br>
-        2021 · Madrid
+        2020 · Madrid
       </div>
       <div class="content">
         <div class="bio-scene">
           <h3 data-es="Buenos Aires" data-en="Buenos Aires">Buenos Aires</h3>
-          <p data-es="Crecí en una casa donde la música no era oficio: era la forma en que se entendía el mundo. Mi padre, César Isella, cantó con Los Fronterizos, escribió «Canción con todos» y fue uno de los fundadores del Nuevo Cancionero. Durante la dictadura fue secuestrado y torturado. Sobrevivió. Aprendí temprano que una canción puede ser refugio y puede ser prueba. Que la memoria se transmite en los intervalos." data-en="I grew up in a house where music wasn't a trade; it was the way the world was understood. My father, César Isella, sang with Los Fronterizos, wrote 'Canción con todos,' and helped found the Nuevo Cancionero movement. He was kidnapped and tortured during the dictatorship. He survived. I learned early that a song can be a refuge and a piece of evidence. That memory travels through intervals.">I grew up in a house where music wasn't a trade; it was the way the world was understood. My father, César Isella, sang with Los Fronterizos, wrote 'Canción con todos,' and helped found the Nuevo Cancionero movement. He was kidnapped and tortured during the dictatorship. He survived. I learned early that a song can be a refuge and a piece of evidence. That memory travels through intervals.</p>
+          <p data-es="Crecí en una casa donde la música no era un oficio: era la forma en que se entendía el mundo. Mi padre, César Isella, fue uno de los referentes del Nuevo Cancionero y compuso la música de «Canción con todos», declarada por la UNESCO himno de la integración latinoamericana. Durante la dictadura fue secuestrado y torturado. Sobrevivió. Aprendí temprano que una canción puede ser peligrosa y también refugio." data-en="I grew up in a house where music wasn't a trade; it was the way the world was understood. My father, César Isella, was one of the figures of the Nuevo Cancionero movement and composed the music for «Canción con todos», declared by UNESCO the anthem of Latin American integration. During the dictatorship he was kidnapped and tortured. He survived. I learned early that a song can be dangerous, and also a refuge.">I grew up in a house where music wasn't a trade; it was the way the world was understood. My father, César Isella, was one of the figures of the Nuevo Cancionero movement and composed the music for «Canción con todos», declared by UNESCO the anthem of Latin American integration. During the dictatorship he was kidnapped and tortured. He survived. I learned early that a song can be dangerous, and also a refuge.</p>
+          <p data-es="A los nueve años empecé a estudiar música después de sacar de oído «El Himno a la Alegría» de Beethoven en un organito Casio. Era un apasionado de la tecnología desde chico: construía mis propios &quot;studio recordings&quot; hackeando tapes y cualquier aparato electrónico que hubiera en casa. A los veinte ya estaba produciendo para Sony Music, arrancando con Soledad Pastorutti. Quince discos de oro y platino, millones de copias vendidas. Pero lo que yo quería, en el fondo, era estudiar música." data-en="At nine I started studying music after picking out Beethoven's 'Ode to Joy' by ear on a Casio. I was obsessed with technology from an early age — building my own studio recordings by hacking tapes and whatever electronics were around the house. By twenty I was already producing for Sony Music, starting with Soledad Pastorutti. Fifteen gold and platinum records, millions of copies sold. But what I really wanted, deep down, was to study music.">At nine I started studying music after picking out Beethoven's 'Ode to Joy' by ear on a Casio. I was obsessed with technology from an early age — building my own studio recordings by hacking tapes and whatever electronics were around the house. By twenty I was already producing for Sony Music, starting with Soledad Pastorutti. Fifteen gold and platinum records, millions of copies sold. But what I really wanted, deep down, was to study music.</p>
         </div>
         <div class="bio-scene">
-          <h3 data-es="Berklee · Nueva York" data-en="Berklee · New York">Berklee · New York</h3>
-          <p data-es="Una beca Fulbright me llevó a estudiar composición de jazz en Berklee. Después, siete años tocando teclados y produciendo discos en Nueva York: Tonic, Nublu, Bowery Ballroom, Miho Hatori, Joy Askew, Karina Zeviani. En paralelo, producciones para Sony y Universal: discos de oro y platino, millones de copias, una nominación al Latin Grammy. Aprendí a hacer discos y aprendí a desconfiar de los discos que hace la industria." data-en="A Fulbright grant brought me to Berklee to study jazz composition. Then seven years playing keys and producing records in New York: Tonic, Nublu, Bowery Ballroom, Miho Hatori, Joy Askew, Karina Zeviani. In parallel, productions for Sony and Universal: gold and platinum records, millions of copies, a Latin Grammy nomination. I learned how to make records. I also learned to distrust the records the industry makes.">A Fulbright grant brought me to Berklee to study jazz composition. Then seven years playing keys and producing records in New York: Tonic, Nublu, Bowery Ballroom, Miho Hatori, Joy Askew, Karina Zeviani. In parallel, productions for Sony and Universal: gold and platinum records, millions of copies, a Latin Grammy nomination. I learned how to make records. I also learned to distrust the records the industry makes.</p>
+          <h3 data-es="Berklee · Boston · Nueva York" data-en="Berklee · Boston · New York">Berklee · Boston · New York</h3>
+          <p data-es="Una beca Fulbright me llevó a Berklee, a estudiar composición de jazz. Después, siete años en Nueva York tocando teclados y produciendo discos: Tonic, Nublu, Bowery Ballroom, Miho Hatori (Cibo Matto), Joy Askew (Peter Gabriel), Karina Zeviani (Thievery Corporation). En paralelo, producciones para Sony y Universal, colaboraciones con Mercedes Sosa y una nominación al Latin Grammy. Fui miembro votante de la Academia Latina de la Grabación. Aprendí a hacer discos, y aprendí a desconfiar de los discos que hace la industria." data-en="A Fulbright grant brought me to Berklee to study jazz composition. Then seven years playing keys and producing records in New York: Tonic, Nublu, Bowery Ballroom, Miho Hatori (Cibo Matto), Joy Askew (Peter Gabriel), Karina Zeviani (Thievery Corporation). In parallel, productions for Sony and Universal, collaborations with Mercedes Sosa, and a Latin Grammy nomination. I was a voting member of the Latin Recording Academy. I learned how to make records. I also learned to distrust the records the industry makes.">A Fulbright grant brought me to Berklee to study jazz composition. Then seven years playing keys and producing records in New York: Tonic, Nublu, Bowery Ballroom, Miho Hatori (Cibo Matto), Joy Askew (Peter Gabriel), Karina Zeviani (Thievery Corporation). In parallel, productions for Sony and Universal, collaborations with Mercedes Sosa, and a Latin Grammy nomination. I was a voting member of the Latin Recording Academy. I learned how to make records. I also learned to distrust the records the industry makes.</p>
         </div>
         <div class="bio-scene">
-          <h3 data-es="limbo/ · la década del 2000" data-en="limbo/ · the 2000s">limbo/ · the 2000s</h3>
-          <p data-es="Volví a Buenos Aires en 2005 y con Cinthia Novick fundamos limbo/. Ripeábamos CDs en una sola PC para iTunes. Fuimos una de las primeras empresas latinoamericanas en firmar con la tienda. En el camino fuimos sello, festival, agencia, distribuidora. El British Council me nombró dos veces Young Creative Entrepreneur of the Year. Coordiné música en el MICA durante cinco años. Cuando la pandemia nos sacó del aire, limbo/ se redefinió como infraestructura B2B: APIs, white-label, integraciones DDEX. Lo que empezó como un micro-sello hoy es la tubería invisible de otros." data-en="I came back to Buenos Aires in 2005 and co-founded limbo/ with Cinthia Novick. We ripped CDs on a single PC for iTunes. We were one of the first Latin American companies to sign with the store. Along the way we were a label, a festival, an agency, a distributor. The British Council named me Young Creative Entrepreneur of the Year twice. I ran the music sector at MICA for five years. When the pandemic cleared the air, limbo/ redefined itself as B2B infrastructure: APIs, white-label, DDEX integrations. What began as a micro-label is now invisible plumbing for others.">I came back to Buenos Aires in 2005 and co-founded limbo/ with Cinthia Novick. We ripped CDs on a single PC for iTunes. We were one of the first Latin American companies to sign with the store. Along the way we were a label, a festival, an agency, a distributor. The British Council named me Young Creative Entrepreneur of the Year twice. I ran the music sector at MICA for five years. When the pandemic cleared the air, limbo/ redefined itself as B2B infrastructure: APIs, white-label, DDEX integrations. What began as a micro-label is now invisible plumbing for others.</p>
+          <h3 data-es="limbo/" data-en="limbo/">limbo/</h3>
+          <p data-es="Volví a Buenos Aires y en 2006, con Cinthia Novick, fundamos limbo/. Ripeábamos CDs en una sola PC para iTunes. Fuimos una de las primeras empresas latinoamericanas en firmar con la tienda. En el camino fuimos sello, festival, agencia, distribuidora. El British Council me nombró dos veces Young Creative Entrepreneur of the Year. Coordiné música en el MICA (Mercado de Industrias Culturales Argentinas) durante cinco años. Cuando la pandemia nos sacó del aire, limbo/ se redefinió como infraestructura B2B: APIs, white-label, integraciones DDEX. Lo que empezó como un micro-sello hoy es la infraestructura invisible por donde transita gran parte de la música independiente global." data-en="I came back to Buenos Aires and in 2006, with Cinthia Novick, we founded limbo/. We ripped CDs on a single PC for iTunes. We were one of the first Latin American companies to sign with the store. Along the way we were a label, a festival, an agency, a distributor. The British Council named me Young Creative Entrepreneur of the Year twice. I coordinated music at MICA (Argentina's Cultural Industries Market) for five years. When the pandemic cleared the air, limbo/ redefined itself as B2B infrastructure: APIs, white-label, DDEX integrations. What began as a micro-label is now the invisible infrastructure through which much of the world's independent music flows.">I came back to Buenos Aires and in 2006, with Cinthia Novick, we founded limbo/. We ripped CDs on a single PC for iTunes. We were one of the first Latin American companies to sign with the store. Along the way we were a label, a festival, an agency, a distributor. The British Council named me Young Creative Entrepreneur of the Year twice. I coordinated music at MICA (Argentina's Cultural Industries Market) for five years. When the pandemic cleared the air, limbo/ redefined itself as B2B infrastructure: APIs, white-label, DDEX integrations. What began as a micro-label is now the invisible infrastructure through which much of the world's independent music flows.</p>
         </div>
         <div class="bio-scene">
           <h3 data-es="Madrid · el presente" data-en="Madrid · today">Madrid · today</h3>
-          <p data-es="Desde 2021 vivimos en Madrid. Soy padre de Dan y Sof. Toco todas las noches que puedo un Nord Grand, un Prophet Rev 2, un Moog semimodular, un Zen Delay. Estoy en el board de Merlin (2024-25), en el comité fundador de EarthPercent, y somos partners fundadores de Sounds Right, el proyecto que en 2025 ganó el Grand Prix de Cannes Lions por hacer de la naturaleza un artista acreditado en Spotify. Escribo todos los meses en The Music of Conversation. Construyo limbo/Chat. Publico My Heart. Lo de siempre: piano y código, a la vez." data-en="Since 2021 we live in Madrid. I'm a father to Dan and Sof. I play a Nord Grand, a Prophet Rev 2, a semi-modular Moog, a Zen Delay, every night I can. I sit on the Merlin board (2024-25), on the founding committee of EarthPercent, and we're founding partners of Sounds Right, the project that won the 2025 Cannes Lions Grand Prix for turning NATURE into a credited artist on Spotify. I write monthly on The Music of Conversation. I build limbo/Chat. I released My Heart. Same as ever: piano and code, at once.">Since 2021 we live in Madrid. I'm a father to Dan and Sof. I play a Nord Grand, a Prophet Rev 2, a semi-modular Moog, a Zen Delay, every night I can. I sit on the Merlin board (2024-25), on the founding committee of EarthPercent, and we're founding partners of Sounds Right, the project that won the 2025 Cannes Lions Grand Prix for turning NATURE into a credited artist on Spotify. I write monthly on The Music of Conversation. I build limbo/Chat. I released My Heart. Same as ever: piano and code, at once.</p>
+          <p data-es="Desde 2020 vivo en Madrid. Soy padre. Toco todas las noches que puedo: un Nord Grand, un Prophet Rev 2, un Moog semimodular, un Zen Delay. Estuve en el board de Merlin (2024-25), soy parte del comité fundador de EarthPercent con Brian Eno, y somos partners fundadores de Sounds Right, el proyecto que en 2025 ganó el Grand Prix de Cannes Lions por acreditar a la naturaleza como artista en Spotify. Escribo todos los meses en The Music of Conversation, que este año se transformó también en podcast. Construimos limbo/Chat, el primer MCP server de la industria de la música." data-en="Since 2020 I've lived in Madrid. I'm a father. I play every night I can: a Nord Grand, a Prophet Rev 2, a semi-modular Moog, a Zen Delay. I was on the Merlin board (2024-25), I'm part of the founding committee of EarthPercent with Brian Eno, and we're founding partners of Sounds Right, the project that won the 2025 Cannes Lions Grand Prix for crediting nature as an artist on Spotify. I write every month in The Music of Conversation, which this year became a podcast too. We built limbo/Chat, the music industry's first MCP server.">Since 2020 I've lived in Madrid. I'm a father. I play every night I can: a Nord Grand, a Prophet Rev 2, a semi-modular Moog, a Zen Delay. I was on the Merlin board (2024-25), I'm part of the founding committee of EarthPercent with Brian Eno, and we're founding partners of Sounds Right, the project that won the 2025 Cannes Lions Grand Prix for crediting nature as an artist on Spotify. I write every month in The Music of Conversation, which this year became a podcast too. We built limbo/Chat, the music industry's first MCP server.</p>
+          <p data-es="Sigo publicando música bajo mi propio sello, The Piano Label. En 2024 salió «My Father's Heart», un concert para piano construido sobre los últimos latidos grabados del corazón de mi papá. Empezó como una forma de atravesar el duelo durante la pandemia. Terminó siendo, quizá, la pieza más honesta que hice nunca." data-en="I keep releasing music on my own label, The Piano Label. In 2024 came 'My Father's Heart,' a piano concert built on the last recorded heartbeats of my father's heart. It started as a way to move through grief during the pandemic. It ended up being, perhaps, the most honest thing I've ever made.">I keep releasing music on my own label, The Piano Label. In 2024 came 'My Father's Heart,' a piano concert built on the last recorded heartbeats of my father's heart. It started as a way to move through grief during the pandemic. It ended up being, perhaps, the most honest thing I've ever made.</p>
+          <p data-es="Lo de siempre: piano y código, a la vez." data-en="Same as ever: piano and code, at once.">Same as ever: piano and code, at once.</p>
         </div>
 
         <div class="bio-collabs">
           <h3 class="collab-title" data-es="Con quién he trabajado" data-en="Who I've worked with">Who I've worked with</h3>
-          <ul class="affil-list">
-            {collaboratorsList.map((collab) => (
-              <li>
-                <span class="affil-name">{collab.data.name}</span>
-                <span
-                  class="affil-role"
-                  data-es={collab.data.role_es}
-                  data-en={collab.data.role_en}
-                >{collab.data.role_en}</span>
-              </li>
-            ))}
-          </ul>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;">
+            <ul class="affil-list">
+              {collaboratorsList.map((collab) => (
+                <li>
+                  <span class="affil-name">{collab.data.name}</span>
+                  <span
+                    class="affil-role"
+                    data-es={collab.data.role_es}
+                    data-en={collab.data.role_en}
+                  >{collab.data.role_en}</span>
+                </li>
+              ))}
+            </ul>
+            <div>
+              <div class="collab-title" style="font-size:12px;margin-bottom:12px;" data-es="Marcas" data-en="Brands">Brands</div>
+              <ul class="affil-list">
+                <li><span class="affil-name">Sony Music</span></li>
+                <li><span class="affil-name">Universal</span></li>
+                <li><span class="affil-name">Motorola</span></li>
+                <li><span class="affil-name">British Council</span></li>
+                <li><span class="affil-name">AKQA</span></li>
+                <li><span class="affil-name">Spotify</span></li>
+                <li><span class="affil-name">Primavera Sound</span></li>
+                <li><span class="affil-name">Real World Studios</span></li>
+                <li><span class="affil-name">Merlin</span></li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -768,11 +790,7 @@ const collaboratorsList = collaborators.sort((a, b) =>
       <div class="meta">
         2007—2025<br>
         <span data-es="Piano, ambient," data-en="Piano, ambient,">Piano, ambient,</span><br>
-        nu-jazz, folk<br>
-        <br>
-        Nord Grand<br>
-        Prophet Rev 2<br>
-        Moog · Zen Delay
+        nu-jazz, folk
       </div>
       <div class="content" style="max-width: none;">
 
@@ -810,10 +828,7 @@ const collaboratorsList = collaborators.sort((a, b) =>
             <li>Soledad Pastorutti</li>
             <li>Vera Spinetta</li>
             <li>Guillermo Klein</li>
-            <li>Ramiro Flores</li>
-            <li>Marta Gómez</li>
             <li>Real World Studios, <em>Producer Camp Vol. 1</em> (2021)</li>
-            <li>Mentor y mixer en SoundBetter</li>
           </ul>
         </div>
       </div>
@@ -824,28 +839,23 @@ const collaboratorsList = collaborators.sort((a, b) =>
   <section id="limbo">
     <div class="section-head">
       <div class="section-num">03 / <span data-es="limbo/ y tecnología" data-en="limbo/ and technology">limbo/ and technology</span></div>
-      <h2 class="section-title" data-es="Construí una tubería para que otros pudieran ser libres." data-en="I built plumbing so others could be free.">I built plumbing so others could be free.</h2>
+      <h2 class="section-title" data-es="Construí una infraestructura para que otros pudieran ser libres." data-en="I built infrastructure so others could be free.">I built infrastructure so others could be free.</h2>
     </div>
     <div class="section-body">
       <div class="meta">
         Desde 2006<br>
         Bootstrapped<br>
         <span data-es="Sin majors" data-en="No majors">No majors</span><br>
-        <span data-es="Sin VCs" data-en="No VCs">No VCs</span><br><br>
-        ~15 <span data-es="personas" data-en="people">people</span><br>
-        50+ DSPs<br>
-        Merlin · YouTube A
+        <span data-es="Sin VCs" data-en="No VCs">No VCs</span>
       </div>
       <div class="content">
         <p data-es="limbo/ existe porque la música independiente no podía seguir alquilándole la infraestructura a sus propios competidores. Durante veinte años construimos tecnología B2B de distribución —APIs, white-label, Music Blocks modulares, royalty reporting, protección contra streaming artificial, un MCP server conversacional— para sellos, agregadores y plataformas que no quieren depender de una major para existir." data-en="limbo/ exists because independent music couldn't keep renting infrastructure from its own competitors. For twenty years we've been building B2B distribution technology (APIs, white-label, modular Music Blocks, royalty reporting, artificial-streaming protection, a conversational MCP server) for labels, aggregators, and platforms that refuse to depend on a major to exist.">limbo/ exists because independent music couldn't keep renting infrastructure from its own competitors. For twenty years we've been building B2B distribution technology (APIs, white-label, modular Music Blocks, royalty reporting, artificial-streaming protection, a conversational MCP server) for labels, aggregators, and platforms that refuse to depend on a major to exist.</p>
 
-        <p data-es="Somos bootstrapped. Sin majors, sin VCs, sin cuerdas. Pertenecemos a Merlin. Somos YouTube Tier A Partner. Clientes como Real World Studios, UN Live, EarthPercent. Lo importante no es la lista: es que cada uno eligió no firmar con nadie que en el futuro pudiera comprarlos." data-en="We're bootstrapped. No majors, no VCs, no strings. Members of Merlin. A YouTube Tier A Partner. Clients like Real World Studios, UN Live, EarthPercent. The list is not the point; the point is that each of them chose not to sign with anyone who might one day buy them.">We're bootstrapped. No majors, no VCs, no strings. Members of Merlin. A YouTube Tier A Partner. Clients like Real World Studios, UN Live, EarthPercent. The list is not the point; the point is that each of them chose not to sign with anyone who might one day buy them.</p>
+        <p data-es="Somos bootstrapped. Sin majors, sin VCs, sin cuerdas. Pertenecemos a Merlin. Clientes como Real World Studios, UN Live, EarthPercent." data-en="We're bootstrapped. No majors, no VCs, no strings. Members of Merlin. Clients like Real World Studios, UN Live, EarthPercent.">We're bootstrapped. No majors, no VCs, no strings. Members of Merlin. Clients like Real World Studios, UN Live, EarthPercent.</p>
 
         <blockquote class="pullquote" data-es="«Own the infrastructure, or you're renting.»" data-en="«Own the infrastructure, or you're renting.»">«Own the infrastructure, or you're renting.»</blockquote>
 
-        <p data-es="La misión, declarada sin rodeos: hacer crecer el PIB global de la música independiente hecha por humanos. No ser el distribuidor más grande del mundo. Agrandar la torta entera." data-en="The mission, stated plainly: grow the global GDP of independent human-made music. Not to be the biggest distributor in the world. To grow the whole pie.">The mission, stated plainly: grow the global GDP of independent human-made music. Not to be the biggest distributor in the world. To grow the whole pie.</p>
-
-        <p data-es="En paralelo trabajo en Beatcoin Music, un musicverse DAO sobre Solana: mi hipótesis sobre cómo se verá la atribución de derechos en la post-IA. El blockchain no se adoptó cuando debía. Ya no está en discusión si hace falta: solo cuándo." data-en="In parallel I'm building Beatcoin Music, a musicverse DAO on Solana: my hypothesis for what rights attribution will look like after AI. The industry didn't adopt blockchain when it should have. It's no longer a question of whether it's needed, only when.">In parallel I'm building Beatcoin Music, a musicverse DAO on Solana: my hypothesis for what rights attribution will look like after AI. The industry didn't adopt blockchain when it should have. It's no longer a question of whether it's needed, only when.</p>
+        <p data-es="La misión, declarada sin rodeos: <strong>hacer crecer el PIB global de la música independiente hecha por humanos.</strong> No ser el distribuidor más grande del mundo. Agrandar la torta entera." data-en="The mission, stated plainly: <strong>grow the global GDP of independent human-made music.</strong> Not to be the biggest distributor in the world. To grow the whole pie.">The mission, stated plainly: <strong>grow the global GDP of independent human-made music.</strong> Not to be the biggest distributor in the world. To grow the whole pie.</p>
 
         <p style="margin-top: 30px;" data-es="Para saber más sobre la empresa: <a href=&quot;https://limbomusic.com&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; class=&quot;inline-link&quot;>limbomusic.com</a>" data-en="More about the company: <a href=&quot;https://limbomusic.com&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; class=&quot;inline-link&quot;>limbomusic.com</a>">More about the company: <a href="https://limbomusic.com" target="_blank" rel="noopener" class="inline-link">limbomusic.com</a></p>
       </div>
@@ -861,31 +871,28 @@ const collaboratorsList = collaborators.sort((a, b) =>
     <div class="footer-col">
       <h5 data-es="Escuchar" data-en="Listen">Listen</h5>
       <ul>
-        <li><a href="#" target="_blank" rel="noopener">Spotify</a></li>
-        <li><a href="#" target="_blank" rel="noopener">Apple Music</a></li>
-        <li><a href="#" target="_blank" rel="noopener">Bandcamp</a></li>
-        <li><a href="#" target="_blank" rel="noopener">SoundCloud</a></li>
-        <li><a href="#" target="_blank" rel="noopener">YouTube</a></li>
+        <li><a href="https://ferisella.bandcamp.com/" target="_blank" rel="noopener">Bandcamp</a></li>
+        <li><a href="https://open.spotify.com/artist/6JW8jw6N04Tdi0YTpGWcfx?si=lsAttZIFTJCBIZBecJ0UWg" target="_blank" rel="noopener">Spotify</a></li>
+        <li><a href="https://www.youtube.com/@ferisella" target="_blank" rel="noopener">YouTube</a></li>
+        <li><a href="https://music.apple.com/es/artist/fer-isella/279282617" target="_blank" rel="noopener">Apple Music</a></li>
+        <li><a href="https://music.amazon.co.uk/artists/B001LDXBE2/fer-isella" target="_blank" rel="noopener">Amazon Music</a></li>
+        <li><a href="https://soundcloud.com/ferisella" target="_blank" rel="noopener">SoundCloud</a></li>
         <li><a href="#" target="_blank" rel="noopener">Deezer</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h5 data-es="Leer · seguir" data-en="Read · follow">Read · follow</h5>
+      <h5 data-es="Seguir" data-en="Follow">Follow</h5>
       <ul>
-        <li><a href="#" target="_blank" rel="noopener">The Music of Conversation</a></li>
-        <li><a href="#" target="_blank" rel="noopener">LinkedIn</a></li>
-        <li><a href="#" target="_blank" rel="noopener">Instagram</a></li>
-        <li><a href="#" target="_blank" rel="noopener">X / Twitter</a></li>
-        <li><a href="#" target="_blank" rel="noopener">Discogs</a></li>
-        <li><a href="#" target="_blank" rel="noopener">SoundBetter</a></li>
+        <li><a href="https://www.linkedin.com/in/ferisella/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://www.instagram.com/ferisella/" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="https://x.com/FerIsella" target="_blank" rel="noopener">X / Twitter</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h5 data-es="Trabajo · contacto" data-en="Work · contact">Work · contact</h5>
       <ul>
         <li><a href="https://limbomusic.com" target="_blank" rel="noopener">limbomusic.com</a></li>
-        <li><a href="#" target="_blank" rel="noopener">Beatcoin Music</a></li>
-        <li><a href="mailto:hola@ferisella.com">hola@ferisella.com</a></li>
+        <li><a href="https://themusicofconversation.substack.com/subscribe" target="_blank" rel="noopener">The Music of Conversation</a></li>
       </ul>
     </div>
   </div>
