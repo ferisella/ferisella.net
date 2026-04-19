@@ -29,6 +29,10 @@ const collaboratorsList = [
 <meta property="og:url" content="https://ferisella.net/">
 <meta property="og:title" content="Fer Isella — Pianist, Producer & Music Technologist">
 <meta property="og:description" content="Pianist, music producer, and co-founder of limbo/ — independent music distribution infrastructure. Latin Grammy-nominated. EarthPercent founding committee with Brian Eno.">
+<meta property="og:image" content="https://ferisella.net/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Fer Isella at the piano">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="es_ES">
 <meta property="profile:first_name" content="Fer">
@@ -39,6 +43,7 @@ const collaboratorsList = [
 <meta name="twitter:site" content="@FerIsella">
 <meta name="twitter:title" content="Fer Isella — Pianist, Producer & Music Technologist">
 <meta name="twitter:description" content="Pianist, music producer, and co-founder of limbo/ — independent music distribution infrastructure. Latin Grammy-nominated. EarthPercent founding committee with Brian Eno.">
+<meta name="twitter:image" content="https://ferisella.net/og-image.jpg">
 
 <!-- Structured Data -->
 <script type="application/ld+json">
@@ -690,8 +695,11 @@ const collaboratorsList = [
 
   /* ---------- Responsive ---------- */
   @media (max-width: 860px) {
-    .nav { padding: 16px 24px; }
-    .nav-menu { display: none; }
+    .nav { padding: 12px 16px; gap: 10px; flex-wrap: wrap; }
+    .nav-brand { font-size: 13px; }
+    .nav-menu { gap: 14px; font-size: 11px; }
+    .nav-menu a { letter-spacing: 0.08em; }
+    .nav-tools { font-size: 11px; gap: 6px; }
     main { padding: 0 24px; }
     footer { padding: 60px 24px 30px; }
     .section-head, .section-body, .essay {
@@ -897,7 +905,7 @@ const collaboratorsList = [
     </div>
     <div class="section-body">
       <div class="meta">
-        Desde 2006<br>
+        <span data-es="Desde 2006" data-en="Since 2006">Since 2006</span><br>
         Bootstrapped<br>
         <span data-es="Sin majors" data-en="No majors">No majors</span><br>
         <span data-es="Sin VCs" data-en="No VCs">No VCs</span>
@@ -943,7 +951,7 @@ const collaboratorsList = [
       </ul>
     </div>
     <div class="footer-col">
-      <h5 data-es="Trabajo · contacto" data-en="Work · contact">Work · contact</h5>
+      <h5 data-es="Contacto" data-en="Contact">Contact</h5>
       <ul>
         <li><a href="https://limbomusic.com" target="_blank" rel="noopener">limbomusic.com</a></li>
         <li><a href="https://themusicofconversation.substack.com/subscribe" target="_blank" rel="noopener">The Music of Conversation</a></li>
@@ -952,7 +960,7 @@ const collaboratorsList = [
   </div>
   <div class="footer-bottom">
     <span>© <span id="year"></span> Fer Isella · Madrid</span>
-    <span data-es="Hecho a mano, sin plantilla." data-en="Hand-built, no template.">Hand-built, no template.</span>
+    <span data-es="Hecho a mano por Fer con Claude" data-en="Hand-built by Fer with Claude">Hand-built by Fer with Claude</span>
   </div>
 </footer>
 
