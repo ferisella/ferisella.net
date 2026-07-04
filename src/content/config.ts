@@ -9,6 +9,8 @@ const releases = defineCollection({
     note_en: z.string().optional(),
     tag_es: z.string().optional(),
     tag_en: z.string().optional(),
+    bandcamp_id: z.string().optional(),
+    bandcamp_url: z.string().optional(),
   }),
 });
 

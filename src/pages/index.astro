@@ -28,15 +28,15 @@ const collaboratorsList = [
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fer Isella — Piano and code. Independent music infrastructure for 20 years.</title>
-<meta name="description" content="I live between the piano and the code. Co-founder of limbo/, independent human music infrastructure. Latin Grammy-nominated. EarthPercent founding committee with Brian Eno. Based in Madrid.">
+<title>Fer Isella · Pianist and composer. Piano and code.</title>
+<meta name="description" content="Latin Grammy-nominated pianist and composer. Author of My Father's Heart and My Heart, released on The Piano Label. Co-founder of limbo/, independent music infrastructure. Based in Madrid.">
 <link rel="canonical" href="https://ferisella.net/">
 
 <!-- Open Graph -->
 <meta property="og:type" content="profile">
 <meta property="og:url" content="https://ferisella.net/">
-<meta property="og:title" content="Fer Isella — Between the piano and the code">
-<meta property="og:description" content="Co-founder of limbo/, independent human music infrastructure. Latin Grammy-nominated. EarthPercent founding committee with Brian Eno. Based in Madrid.">
+<meta property="og:title" content="Fer Isella · Between the piano and the code">
+<meta property="og:description" content="Latin Grammy-nominated pianist and composer. My Father's Heart, My Heart, The Piano Label. Co-founder of limbo/, independent music infrastructure. Madrid.">
 <meta property="og:image" content="https://ferisella.net/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -49,8 +49,8 @@ const collaboratorsList = [
 <!-- Twitter / X -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@FerIsella">
-<meta name="twitter:title" content="Fer Isella — Between the piano and the code">
-<meta name="twitter:description" content="Co-founder of limbo/, independent human music infrastructure. Latin Grammy-nominated. EarthPercent founding committee with Brian Eno. Based in Madrid.">
+<meta name="twitter:title" content="Fer Isella · Between the piano and the code">
+<meta name="twitter:description" content="Latin Grammy-nominated pianist and composer. My Father's Heart, My Heart, The Piano Label. Co-founder of limbo/, independent music infrastructure. Madrid.">
 <meta name="twitter:image" content="https://ferisella.net/og-image.jpg">
 
 <!-- Structured Data -->
@@ -425,6 +425,17 @@ const collaboratorsList = [
     color: var(--accent);
     margin-bottom: 24px;
   }
+  .collab-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  /* Dentro de la grilla de colaboradores cada lista va a una sola columna:
+     con las dos columnas por defecto los nombres y roles se solapan */
+  .collab-grid .affil-list {
+    grid-template-columns: 1fr;
+  }
 
   /* ---------- MÚSICA ---------- */
   .discog {
@@ -488,6 +499,27 @@ const collaboratorsList = [
   .release-tag.featured-tag {
     color: var(--accent);
   }
+  .release-player {
+    margin-top: 12px;
+    max-width: 460px;
+  }
+  .release-listen {
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: color 200ms ease, border-color 200ms ease;
+  }
+  .release-listen:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .release-player.loaded .release-listen { display: none; }
 
   .prod-block {
     margin-top: 80px;
@@ -650,6 +682,7 @@ const collaboratorsList = [
     .release-tag { grid-column: 2; font-size: 9px; margin-top: 2px; }
     .prod-list { columns: 1; }
     .affil-list { grid-template-columns: 1fr; }
+    .collab-grid { grid-template-columns: 1fr; }
     .footer-grid { grid-template-columns: 1fr; gap: 36px; }
     .footer-bottom { flex-direction: column; gap: 12px; align-items: flex-start; }
     section { padding: 8vh 0; }
@@ -688,8 +721,8 @@ const collaboratorsList = [
 <nav class="nav">
   <a href="#intro" class="nav-brand">Fer Isella</a>
   <div class="nav-menu">
-    <a href="#bio" data-es="Bio" data-en="Bio">Bio</a>
     <a href="#musica" data-es="Música" data-en="Music">Music</a>
+    <a href="#bio" data-es="Bio" data-en="Bio">Bio</a>
     <a href="#limbo">limbo/</a>
     <a href="https://www.youtube.com/@ferisella" target="_blank" rel="noopener" data-es="Podcast" data-en="Podcast">Podcast</a>
   </div>
@@ -706,8 +739,8 @@ const collaboratorsList = [
   <section id="intro">
     <h1 class="intro-lead">
       <span data-es="Vivo entre el piano y el código." data-en="I live between the piano and the code.">I live between the piano and the code.</span><br>
-      <span class="italic" data-es="Argentino en Madrid." data-en="Argentine in Madrid.">Argentine in Madrid.</span><br>
-      <span class="light" data-es="Hace veinte años cofundé limbo/, infraestructura de distribución B2B modular para la música humana e independiente." data-en="Twenty years ago I co-founded limbo/, B2B modular distribution infrastructure for human and independent music.">Twenty years ago I co-founded limbo/, B2B modular distribution infrastructure for human and independent music.</span>
+      <span class="italic" data-es="Pianista y compositor. Argentino en Madrid." data-en="Pianist and composer. Argentine in Madrid.">Pianist and composer. Argentine in Madrid.</span><br>
+      <span class="light" data-es="Publico música para piano en The Piano Label. Hace veinte años cofundé limbo/ para que la música independiente sea dueña de su propia infraestructura." data-en="I release piano music on The Piano Label. Twenty years ago I co-founded limbo/ so independent music could own its own infrastructure.">I release piano music on The Piano Label. Twenty years ago I co-founded limbo/ so independent music could own its own infrastructure.</span>
     </h1>
 
     <svg class="intro-ekg" viewBox="0 0 520 48" preserveAspectRatio="none" aria-hidden="true">
@@ -725,10 +758,71 @@ const collaboratorsList = [
     </div>
   </section>
 
+  <!-- ============ MÚSICA ============ -->
+  <section id="musica">
+    <div class="section-head">
+      <div class="section-num">01 / <span data-es="Música" data-en="Music">Music</span></div>
+      <h2 class="section-title"><span data-es="Lo que he grabado y" data-en="What I've recorded and">What I've recorded and</span><em data-es="lo que he ayudado a grabar." data-en="what I've helped others record.">what I've helped others record.</em></h2>
+    </div>
+    <div class="section-body">
+      <div class="meta">
+        2007—2025<br>
+        <span data-es="Piano, ambient," data-en="Piano, ambient,">Piano, ambient,</span><br>
+        nu-jazz, folk
+      </div>
+      <div class="content" style="max-width: none;">
+
+        <div class="discog">
+          {releasesList.map((release, index) => (
+            <article class={`release ${index === 0 ? 'featured' : ''}`}>
+              <div class="release-year">{release.data.year}</div>
+              <div class="release-main">
+                <div class="release-title">{release.data.title}</div>
+                {(release.data.note_es || release.data.note_en) && (
+                  <div
+                    class="release-note"
+                    data-es={release.data.note_es}
+                    data-en={release.data.note_en}
+                  >
+                    {release.data.note_en || release.data.note_es}
+                  </div>
+                )}
+                {release.data.bandcamp_id && (
+                  <div class="release-player">
+                    <button type="button" class="release-listen" data-es="Escuchar" data-en="Listen">Listen</button>
+                    <div class="bc-player" data-album={release.data.bandcamp_id} data-url={release.data.bandcamp_url}></div>
+                  </div>
+                )}
+              </div>
+              <div
+                class={`release-tag ${index === 0 ? 'featured-tag' : ''}`}
+                data-es={release.data.tag_es}
+                data-en={release.data.tag_en}
+              >
+                {release.data.tag_en || release.data.tag_es || 'Release'}
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div class="prod-block">
+          <div class="prod-block-title" data-es="Producciones para otros · selección" data-en="Productions for others · selected">Productions for others · selected</div>
+          <ul class="prod-list">
+            <li>Mercedes Sosa, <em>Ángel</em> (Universal, póstumo, 2014)</li>
+            <li>Soledad Pastorutti</li>
+            <li>Vera Spinetta</li>
+            <li>Guillermo Klein</li>
+            <li>Real World Studios, <em>Producer Camp Vol. 1</em> (2021)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ BIO ============ -->
   <section id="bio">
     <div class="section-head">
-      <div class="section-num">01 / <span data-es="Bio" data-en="Bio">Bio</span></div>
+      <div class="section-num">02 / <span data-es="Bio" data-en="Bio">Bio</span></div>
       <h2 class="section-title" data-es="Piano y código" data-en="Piano and Code">Piano y código</h2>
     </div>
     <div class="section-body">
@@ -761,7 +855,7 @@ const collaboratorsList = [
 
         <div class="bio-collabs">
           <h3 class="collab-title" data-es="Con quién he trabajado" data-en="Who I've worked with">Who I've worked with</h3>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;">
+          <div class="collab-grid">
             <ul class="affil-list">
               {collaboratorsList.map((collab) => (
                 <li>
@@ -789,61 +883,6 @@ const collaboratorsList = [
               </ul>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ MÚSICA ============ -->
-  <section id="musica">
-    <div class="section-head">
-      <div class="section-num">02 / <span data-es="Música" data-en="Music">Music</span></div>
-      <h2 class="section-title"><span data-es="Lo que he grabado y" data-en="What I've recorded and">What I've recorded and</span><em data-es="lo que he ayudado a grabar." data-en="what I've helped others record.">what I've helped others record.</em></h2>
-    </div>
-    <div class="section-body">
-      <div class="meta">
-        2007—2025<br>
-        <span data-es="Piano, ambient," data-en="Piano, ambient,">Piano, ambient,</span><br>
-        nu-jazz, folk
-      </div>
-      <div class="content" style="max-width: none;">
-
-        <div class="discog">
-          {releasesList.map((release, index) => (
-            <article class={`release ${index === 0 ? 'featured' : ''}`}>
-              <div class="release-year">{release.data.year}</div>
-              <div class="release-main">
-                <div class="release-title">{release.data.title}</div>
-                {(release.data.note_es || release.data.note_en) && (
-                  <div
-                    class="release-note"
-                    data-es={release.data.note_es}
-                    data-en={release.data.note_en}
-                  >
-                    {release.data.note_en || release.data.note_es}
-                  </div>
-                )}
-              </div>
-              <div
-                class={`release-tag ${index === 0 ? 'featured-tag' : ''}`}
-                data-es={release.data.tag_es}
-                data-en={release.data.tag_en}
-              >
-                {release.data.tag_en || release.data.tag_es || 'Release'}
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <div class="prod-block">
-          <div class="prod-block-title" data-es="Producciones para otros · selección" data-en="Productions for others · selected">Productions for others · selected</div>
-          <ul class="prod-list">
-            <li>Mercedes Sosa, <em>Ángel</em> (Universal, póstumo, 2014)</li>
-            <li>Soledad Pastorutti</li>
-            <li>Vera Spinetta</li>
-            <li>Guillermo Klein</li>
-            <li>Real World Studios, <em>Producer Camp Vol. 1</em> (2021)</li>
-          </ul>
         </div>
       </div>
     </div>
@@ -942,7 +981,31 @@ const collaboratorsList = [
       localStorage.setItem('theme', 'dark');
     }
     updateThemeLabel();
+    // Los players de Bandcamp llevan los colores del tema en la URL del
+    // iframe, así que los ya cargados se reconstruyen con la nueva paleta
+    document.querySelectorAll('.release-player.loaded .bc-player').forEach(el => buildPlayer(el));
   });
+
+  // Players de Bandcamp (carga perezosa: el iframe solo se crea al pedirlo)
+  const playerColors = () => root.getAttribute('data-theme') === 'dark'
+    ? { bg: '1A1814', link: 'E57B4E' }
+    : { bg: 'EDE7D9', link: '9C3B1F' };
+  const buildPlayer = (holder) => {
+    const { bg, link } = playerColors();
+    const iframe = document.createElement('iframe');
+    iframe.title = 'Bandcamp player';
+    iframe.loading = 'lazy';
+    iframe.style.cssText = 'border:0;width:100%;height:42px;';
+    iframe.src = `https://bandcamp.com/EmbeddedPlayer/album=${holder.dataset.album}/size=small/bgcol=${bg}/linkcol=${link}/transparent=true/`;
+    holder.replaceChildren(iframe);
+    holder.closest('.release-player').classList.add('loaded');
+  };
+  document.querySelectorAll('.release-listen').forEach(btn => {
+    btn.addEventListener('click', () => buildPlayer(btn.parentElement.querySelector('.bc-player')));
+  });
+  // El release destacado carga su player de entrada
+  const featuredPlayer = document.querySelector('.release.featured .bc-player');
+  if (featuredPlayer) buildPlayer(featuredPlayer);
 
   // Idioma
   const langToggle = document.getElementById('lang-toggle');

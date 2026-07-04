@@ -41,6 +41,14 @@ export default config({
           label: 'Tag (English)',
           description: 'e.g., "Album", "EP", "Single"',
         }),
+        bandcamp_id: fields.text({
+          label: 'Bandcamp album ID',
+          description: 'Numeric ID for the embedded player (from the album page embed code)',
+        }),
+        bandcamp_url: fields.text({
+          label: 'Bandcamp URL',
+          description: 'Full album URL, e.g., https://ferisella.bandcamp.com/album/my-heart',
+        }),
       },
     }),
 
