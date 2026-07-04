@@ -1,0 +1,28 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  lang: 'en' | 'es';
+  release: CollectionEntry<'releases'>;
+}
+
+const { lang, release } = Astro.props;
+const es = lang === 'es';
+const d = release.data;
+const home = es ? '/es/' : '/';
+const note = es ? (d.note_es || d.note_en) : (d.note_en || d.note_es);
+const tag = es ? (d.tag_es || d.tag_en) : (d.tag_en || d.tag_es);
+---
+
+<section class="release-hero">
+  <a href={`${home}#musica`} class="back-link">← {es ? 'Música' : 'Music'}</a>
+  <div class="release-page-meta">{d.year}{tag ? ` · ${tag}` : ''} · Fer Isella</div>
+  <h1 class="release-page-title">{d.title}</h1>
+  {note && <p class="release-page-note">{note}</p>}
+  {d.bandcamp_id && (
+    <div class="release-page-player">
+      <div class="bc-player" data-album={d.bandcamp_id} data-url={d.bandcamp_url} data-size="large" data-autoload></div>
+      <a class="inline-link bc-link" href={d.bandcamp_url} target="_blank" rel="noopener">{es ? 'Escuchar en Bandcamp' : 'Listen on Bandcamp'} ↗</a>
+    </div>
+  )}
+</section>

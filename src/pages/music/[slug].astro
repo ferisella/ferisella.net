@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ReleaseDetail from '../../components/ReleaseDetail.astro';
+import { albumSchema, SITE } from '../../lib/schema';
+
+export async function getStaticPaths() {
+  const releases = await getCollection('releases');
+  return releases.map((release) => ({
+    params: { slug: release.id },
+    props: { release },
+  }));
+}
+
+const { release } = Astro.props;
+const d = release.data;
+const path = `/music/${release.id}/`;
+const title = `${d.title} (${d.year}) · Fer Isella`;
+const description = d.note_en || d.note_es || `${d.title}, a ${d.year} release by Fer Isella.`;
+const schema = albumSchema(d, `${SITE}${path}`);
+---
+
+<Base lang="en" title={title} description={description} path={path} ogType="music.album">
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </Fragment>
+  <ReleaseDetail lang="en" release={release} />
+</Base>

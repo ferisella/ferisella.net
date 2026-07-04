@@ -1,0 +1,230 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+  lang: 'en' | 'es';
+}
+
+const { lang } = Astro.props;
+const es = lang === 'es';
+const t = (esText: string, enText: string) => (es ? esText : enText);
+const musicBase = es ? '/es/music/' : '/music/';
+
+const highlights = await getCollection('highlights');
+const releases = await getCollection('releases');
+const collaborators = await getCollection('collaborators');
+
+const highlightsData = highlights[0]?.data.items || [];
+const releasesList = releases.sort((a, b) => b.data.year - a.data.year);
+const allCollaborators = collaborators.sort((a, b) => a.data.name.localeCompare(b.data.name));
+const priorityNames = ['Brian Eno', 'Mercedes Sosa', 'Matthew Herbert', 'Matthew Dear', 'James Ellis Ford'];
+const collaboratorsList = [
+  ...priorityNames.map(name => allCollaborators.find(c => c.data.name === name)).filter(Boolean),
+  ...allCollaborators.filter(c => !priorityNames.includes(c.data.name)),
+];
+---
+
+<!-- ============ INTRO ============ -->
+<section id="intro">
+  <h1 class="intro-lead">
+    <span>{t('Vivo entre el piano y el código.', 'I live between the piano and the code.')}</span><br>
+    <span class="italic">{t('Pianista y compositor. Argentino en Madrid.', 'Pianist and composer. Argentine in Madrid.')}</span><br>
+    <span class="light">{t('Publico música para piano en The Piano Label. Hace veinte años cofundé limbo/ para que la música independiente sea dueña de su propia infraestructura.', 'I release piano music on The Piano Label. Twenty years ago I co-founded limbo/ so independent music could own its own infrastructure.')}</span>
+  </h1>
+
+  <svg class="intro-ekg" viewBox="0 0 520 48" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,24 L80,24 L95,24 L105,12 L115,36 L125,6 L135,40 L145,24 L200,24 L215,24 L225,20 L235,28 L245,24 L310,24 L325,24 L335,14 L345,34 L355,10 L365,38 L375,24 L430,24 L445,24 L455,22 L465,26 L475,24 L520,24"/>
+  </svg>
+
+  <div class="intro-threads">
+    {highlightsData.map((item) => (
+      <a href={item.link || '#'} class="thread">
+        <div class="thread-label">{es ? (item.label_es || item.label_en) : (item.label_en || item.label_es)}</div>
+        <div class="thread-title">{item.title}</div>
+        <div class="thread-meta">{item.description}</div>
+      </a>
+    ))}
+  </div>
+</section>
+
+<!-- ============ MÚSICA ============ -->
+<section id="musica">
+  <div class="section-head">
+    <div class="section-num">01 / {t('Música', 'Music')}</div>
+    <h2 class="section-title">{t('Lo que he grabado y', "What I've recorded and")} <em>{t('lo que he ayudado a grabar.', "what I've helped others record.")}</em></h2>
+  </div>
+  <div class="section-body">
+    <div class="meta">
+      2007—2025<br>
+      {t('Piano, ambient,', 'Piano, ambient,')}<br>
+      nu-jazz, folk
+    </div>
+    <div class="content" style="max-width: none;">
+
+      <div class="discog">
+        {releasesList.map((release, index) => (
+          <article class={`release ${index === 0 ? 'featured' : ''}`}>
+            <div class="release-year">{release.data.year}</div>
+            <div class="release-main">
+              <div class="release-title">
+                <a href={`${musicBase}${release.id}/`}>{release.data.title}</a>
+              </div>
+              {(release.data.note_es || release.data.note_en) && (
+                <div class="release-note">
+                  {es ? (release.data.note_es || release.data.note_en) : (release.data.note_en || release.data.note_es)}
+                </div>
+              )}
+              {release.data.bandcamp_id && (
+                <div class="release-player">
+                  <button type="button" class="release-listen">{t('Escuchar', 'Listen')}</button>
+                  <div
+                    class="bc-player"
+                    data-album={release.data.bandcamp_id}
+                    data-url={release.data.bandcamp_url}
+                    data-autoload={index === 0 ? '' : undefined}
+                  ></div>
+                </div>
+              )}
+            </div>
+            <div class={`release-tag ${index === 0 ? 'featured-tag' : ''}`}>
+              {es ? (release.data.tag_es || release.data.tag_en || 'Release') : (release.data.tag_en || release.data.tag_es || 'Release')}
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div class="prod-block">
+        <div class="prod-block-title">{t('Producciones para otros · selección', 'Productions for others · selected')}</div>
+        <ul class="prod-list">
+          <li>Mercedes Sosa, <em>Ángel</em> (Universal, {t('póstumo', 'posthumous')}, 2014)</li>
+          <li>Soledad Pastorutti</li>
+          <li>Vera Spinetta</li>
+          <li>Guillermo Klein</li>
+          <li>Real World Studios, <em>Producer Camp Vol. 1</em> (2021)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BIO ============ -->
+<section id="bio">
+  <div class="section-head">
+    <div class="section-num">02 / Bio</div>
+    <h2 class="section-title">{t('Piano y código', 'Piano and Code')}</h2>
+  </div>
+  <div class="section-body">
+    <div class="meta">
+      1975 · BA<br>
+      Berklee · NY<br>
+      2006 · limbo/<br>
+      2020 · Madrid
+    </div>
+    <div class="content">
+      <div class="bio-scene">
+        <h3>Buenos Aires</h3>
+        <p>{t(
+          'Crecí en una casa donde la música no era un oficio: era la forma en que se entendía el mundo. Mi padre, César Isella, fue uno de los referentes del Nuevo Cancionero y compuso la música de «Canción con todos», declarada por la UNESCO himno de la integración latinoamericana. Durante la dictadura fue secuestrado y torturado. Sobrevivió. Aprendí temprano que una canción puede ser peligrosa y también refugio.',
+          "I grew up in a house where music wasn't a trade; it was the way the world was understood. My father, César Isella, was one of the figures of the Nuevo Cancionero movement and composed the music for «Canción con todos», declared by UNESCO the anthem of Latin American integration. During the dictatorship he was kidnapped and tortured. He survived. I learned early that a song can be dangerous, and also a refuge."
+        )}</p>
+        <p>{t(
+          'A los nueve años empecé a estudiar música después de sacar de oído «El Himno a la Alegría» de Beethoven en un organito Casio. Era un apasionado de la tecnología desde chico: construía mis propios "studio recordings" hackeando tapes y cualquier aparato electrónico que hubiera en casa. A los veinte ya estaba produciendo para Sony Music, arrancando con Soledad Pastorutti. Quince discos de oro y platino, millones de copias vendidas. Pero lo que yo quería, en el fondo, era estudiar música.',
+          "At nine I started studying music after picking out Beethoven's 'Ode to Joy' by ear on a Casio. I was obsessed with technology from an early age — building my own studio recordings by hacking tapes and whatever electronics were around the house. By twenty I was already producing for Sony Music, starting with Soledad Pastorutti. Fifteen gold and platinum records, millions of copies sold. But what I really wanted, deep down, was to study music."
+        )}</p>
+      </div>
+      <div class="bio-scene">
+        <h3>{t('Berklee · Boston · Nueva York', 'Berklee · Boston · New York')}</h3>
+        <p>{t(
+          'Una beca Fulbright me llevó a Berklee, a estudiar composición de jazz. Después, siete años en Nueva York tocando teclados y produciendo discos: Tonic, Nublu, Bowery Ballroom, Miho Hatori (Cibo Matto), Joy Askew (Peter Gabriel), Karina Zeviani (Thievery Corporation). En paralelo, producciones para Sony y Universal, colaboraciones con Mercedes Sosa y una nominación al Latin Grammy. Fui miembro votante de la Academia Latina de la Grabación. Aprendí a hacer discos, y aprendí a desconfiar de los discos que hace la industria.',
+          'A Fulbright grant brought me to Berklee to study jazz composition. Then seven years playing keys and producing records in New York: Tonic, Nublu, Bowery Ballroom, Miho Hatori (Cibo Matto), Joy Askew (Peter Gabriel), Karina Zeviani (Thievery Corporation). In parallel, productions for Sony and Universal, collaborations with Mercedes Sosa, and a Latin Grammy nomination. I was a voting member of the Latin Recording Academy. I learned how to make records. I also learned to distrust the records the industry makes.'
+        )}</p>
+      </div>
+      <div class="bio-scene">
+        <h3>limbo/</h3>
+        <p>{t(
+          'Volví a Buenos Aires y en 2006, con Cinthia Novick, fundamos limbo/. Ripeábamos CDs en una sola PC para iTunes. Fuimos una de las primeras empresas latinoamericanas en firmar con la tienda. En el camino fuimos sello, festival, agencia, distribuidora. El British Council me nombró dos veces Young Creative Entrepreneur of the Year. Coordiné música en el MICA (Mercado de Industrias Culturales Argentinas) durante cinco años. Cuando la pandemia nos sacó del aire, limbo/ se redefinió como infraestructura B2B: APIs, white-label, integraciones DDEX. Lo que empezó como un micro-sello hoy es la infraestructura invisible por donde transita gran parte de la música independiente global.',
+          "I came back to Buenos Aires and in 2006, with Cinthia Novick, we founded limbo/. We ripped CDs on a single PC for iTunes. We were one of the first Latin American companies to sign with the store. Along the way we were a label, a festival, an agency, a distributor. The British Council named me Young Creative Entrepreneur of the Year twice. I coordinated music at MICA (Argentina's Cultural Industries Market) for five years. When the pandemic cleared the air, limbo/ redefined itself as B2B infrastructure: APIs, white-label, DDEX integrations. What began as a micro-label is now the invisible infrastructure through which much of the world's independent music flows."
+        )}</p>
+      </div>
+      <div class="bio-scene">
+        <h3>{t('Madrid · el presente', 'Madrid · today')}</h3>
+        <p>{t(
+          'Desde 2020 vivo en Madrid. Soy padre. Toco el piano casi todas las noches: un Nord Grand rodeado de un Prophet Rev 2, un Moog semimodular y un Zen Delay. Estuve en el board de Merlin (2024-25), soy miembro fundador del Comité de Música de EarthPercent de Brian Eno, y limbo/ es partner fundador de Sounds Right, el proyecto que en 2025 ganó el Grand Prix de Cannes Lions por acreditar a la naturaleza como artista en Spotify. Escribo todos los meses en The Music of Conversation, que este año se transformó también en podcast. Construimos limbo/Chat, el primer MCP server de la industria de la música.',
+          "Since 2020 I've lived in Madrid. I'm a father. I play piano almost every night, on a Nord Grand surrounded by a Prophet Rev 2, a semi-modular Moog, and a Zen Delay. I was on the Merlin board (2024-25), I'm a founding member of Brian Eno's EarthPercent Music Committee, and limbo/ is a founding partner of Sounds Right, the project that won the 2025 Cannes Lions Grand Prix for crediting nature as an artist on Spotify. I write every month in The Music of Conversation, which this year became a podcast too. We built limbo/Chat, the music industry's first MCP server."
+        )}</p>
+        <p>{t(
+          'Sigo publicando música bajo mi propio sello, The Piano Label. En 2024 salió «My Father’s Heart», un concert para piano construido sobre los últimos latidos grabados del corazón de mi papá. Empezó como una forma de atravesar el duelo durante la pandemia. Terminó siendo, quizá, la pieza más honesta que hice nunca.',
+          "I keep releasing music on my own label, The Piano Label. In 2024 came 'My Father's Heart,' a piano concert built on the last recorded heartbeats of my father's heart. It started as a way to move through grief during the pandemic. It ended up being, perhaps, the most honest thing I've ever made."
+        )}</p>
+        <p>{t('Lo de siempre: piano y código, a la vez.', 'Same as ever: piano and code, at once.')}</p>
+      </div>
+
+      <div class="bio-collabs">
+        <h3 class="collab-title">{t('Con quién he trabajado', "Who I've worked with")}</h3>
+        <div class="collab-grid">
+          <ul class="affil-list">
+            {collaboratorsList.map((collab) => (
+              <li>
+                <span class="affil-name">{collab.data.name}</span>
+                <span class="affil-role">{es ? collab.data.role_es : collab.data.role_en}</span>
+              </li>
+            ))}
+          </ul>
+          <div>
+            <div class="collab-title" style="font-size:12px;margin-bottom:12px;">{t('Marcas', 'Brands')}</div>
+            <ul class="affil-list">
+              <li><span class="affil-name">Sony Music</span></li>
+              <li><span class="affil-name">Universal</span></li>
+              <li><span class="affil-name">Motorola</span></li>
+              <li><span class="affil-name">British Council</span></li>
+              <li><span class="affil-name">AKQA</span></li>
+              <li><span class="affil-name">Spotify</span></li>
+              <li><span class="affil-name">Primavera Sound</span></li>
+              <li><span class="affil-name">Real World Studios</span></li>
+              <li><span class="affil-name">Merlin</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LIMBO ============ -->
+<section id="limbo">
+  <div class="section-head">
+    <div class="section-num">03 / {t('limbo/ y tecnología', 'limbo/ and technology')}</div>
+    <h2 class="section-title">{t('Construí una infraestructura para que otros no tuvieran que hacerlo.', "I built infrastructure so others wouldn't have to.")}</h2>
+  </div>
+  <div class="section-body">
+    <div class="meta">
+      {t('Desde 2006', 'Since 2006')}<br>
+      Bootstrapped<br>
+      {t('Sin majors', 'No majors')}<br>
+      {t('Sin VCs', 'No VCs')}
+    </div>
+    <div class="content">
+      <p>{t(
+        'limbo/ existe porque la música independiente no podía seguir alquilándole la infraestructura a sus propios competidores. Durante veinte años construimos tecnología B2B de distribución —APIs, white-label, Music Blocks modulares, royalty reporting, protección contra streaming artificial, un MCP server conversacional— para sellos, agregadores y plataformas que no quieren depender de una major para existir.',
+        "limbo/ exists because independent music couldn't keep renting infrastructure from its own competitors. For twenty years we've been building B2B distribution technology (APIs, white-label, modular Music Blocks, royalty reporting, artificial-streaming protection, a conversational MCP server) for labels, aggregators, and platforms that refuse to depend on a major to exist."
+      )}</p>
+
+      <p>{t(
+        'Somos bootstrapped. Sin majors, sin VCs, sin cuerdas. Pertenecemos a Merlin. Clientes como Real World Studios, UN Live, EarthPercent.',
+        "We're bootstrapped. No majors, no VCs, no strings. Members of Merlin. Clients like Real World Studios, UN Live, EarthPercent."
+      )}</p>
+
+      <blockquote class="pullquote">«Own the infrastructure, or you're renting.»</blockquote>
+
+      <p>
+        {es
+          ? <Fragment>La misión, declarada sin rodeos: <strong>hacer crecer el PIB global de la música independiente hecha por humanos.</strong> No ser el distribuidor más grande del mundo. Agrandar la torta entera.</Fragment>
+          : <Fragment>The mission, stated plainly: <strong>grow the global GDP of independent human and independent music.</strong> Not to be the biggest distributor in the world. To grow the whole pie.</Fragment>}
+      </p>
+
+      <p style="margin-top: 30px;">
+        {t('Para saber más sobre la empresa: ', 'More about the company: ')}<a href="https://limbomusic.com" target="_blank" rel="noopener" class="inline-link">limbomusic.com</a>
+      </p>
+    </div>
+  </div>
+</section>

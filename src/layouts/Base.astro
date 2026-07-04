@@ -1,0 +1,225 @@
+---
+import '@fontsource-variable/fraunces/full.css';
+import '@fontsource-variable/fraunces/full-italic.css';
+import '@fontsource/spectral/300.css';
+import '@fontsource/spectral/400.css';
+import '@fontsource/spectral/500.css';
+import '@fontsource/spectral/300-italic.css';
+import '@fontsource/spectral/400-italic.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import '../styles/global.css';
+import { SITE } from '../lib/schema';
+
+interface Props {
+  lang: 'en' | 'es';
+  title: string;
+  description: string;
+  /** Ruta sin prefijo de idioma, con barra final. Ej: '/', '/music/my-heart/' */
+  path: string;
+  ogType?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+}
+
+const {
+  lang,
+  title,
+  description,
+  path,
+  ogType = 'website',
+  ogTitle = Astro.props.title,
+  ogDescription = Astro.props.description,
+} = Astro.props;
+
+const es = lang === 'es';
+const t = (esText: string, enText: string) => (es ? esText : enText);
+
+const enUrl = `${SITE}${path}`;
+const esUrl = `${SITE}/es${path}`;
+const currentUrl = es ? esUrl : enUrl;
+const altPath = es ? path : `/es${path}`;
+const home = es ? '/es/' : '/';
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{title}</title>
+<meta name="description" content={description}>
+<link rel="canonical" href={currentUrl}>
+<link rel="alternate" hreflang="en" href={enUrl}>
+<link rel="alternate" hreflang="es" href={esUrl}>
+<link rel="alternate" hreflang="x-default" href={enUrl}>
+
+<!-- Open Graph -->
+<meta property="og:type" content={ogType}>
+<meta property="og:url" content={currentUrl}>
+<meta property="og:title" content={ogTitle}>
+<meta property="og:description" content={ogDescription}>
+<meta property="og:image" content={`${SITE}/og-image.jpg`}>
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Fer Isella at the piano">
+<meta property="og:locale" content={es ? 'es_ES' : 'en_US'}>
+<meta property="og:locale:alternate" content={es ? 'en_US' : 'es_ES'}>
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@FerIsella">
+<meta name="twitter:title" content={ogTitle}>
+<meta name="twitter:description" content={ogDescription}>
+<meta name="twitter:image" content={`${SITE}/og-image.jpg`}>
+
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#F4EFE4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#13110D" media="(prefers-color-scheme: dark)">
+<script is:inline>
+  (function () {
+    var saved = localStorage.getItem('theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved === 'dark' || (!saved && prefersDark)) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>
+<slot name="head" />
+</head>
+<body>
+
+<nav class="nav">
+  <a href={home} class="nav-brand">Fer Isella</a>
+  <div class="nav-menu">
+    <a href={`${home}#musica`}>{t('Música', 'Music')}</a>
+    <a href={`${home}#bio`}>Bio</a>
+    <a href={`${home}#limbo`}>limbo/</a>
+    <a href="https://www.youtube.com/@ferisella" target="_blank" rel="noopener">Podcast</a>
+  </div>
+  <div class="nav-tools">
+    <a id="lang-toggle" href={altPath} aria-label={t('Switch to English', 'Cambiar a español')}>{t('EN', 'ES')}</a>
+    <span class="sep" aria-hidden="true">·</span>
+    <button id="theme-toggle" aria-label={t('Cambiar entre tema claro y oscuro', 'Toggle light and dark theme')}>{t('Noche', 'Night')}</button>
+  </div>
+</nav>
+
+<main>
+  <slot />
+</main>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h5>{t('Escuchar', 'Listen')}</h5>
+      <ul>
+        <li><a href="https://ferisella.bandcamp.com/" target="_blank" rel="noopener">Bandcamp</a></li>
+        <li><a href="https://open.spotify.com/artist/6JW8jw6N04Tdi0YTpGWcfx?si=lsAttZIFTJCBIZBecJ0UWg" target="_blank" rel="noopener">Spotify</a></li>
+        <li><a href="https://www.youtube.com/@ferisella" target="_blank" rel="noopener">YouTube</a></li>
+        <li><a href="https://music.apple.com/es/artist/fer-isella/279282617" target="_blank" rel="noopener">Apple Music</a></li>
+        <li><a href="https://music.amazon.co.uk/artists/B001LDXBE2/fer-isella" target="_blank" rel="noopener">Amazon Music</a></li>
+        <li><a href="https://soundcloud.com/ferisella" target="_blank" rel="noopener">SoundCloud</a></li>
+        <li><a href="https://www.deezer.com/us/artist/3800101" target="_blank" rel="noopener">Deezer</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>{t('Seguir', 'Follow')}</h5>
+      <ul>
+        <li><a href="https://www.linkedin.com/in/ferisella/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://www.instagram.com/ferisella/" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="https://x.com/FerIsella" target="_blank" rel="noopener">X / Twitter</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>{t('Contacto', 'Contact')}</h5>
+      <ul>
+        <li><a href="https://limbomusic.com" target="_blank" rel="noopener">limbomusic.com</a></li>
+        <li><a href="https://themusicofconversation.substack.com/subscribe" target="_blank" rel="noopener">The Music of Conversation</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="year"></span> Fer Isella · Madrid</span>
+    <span>{t('Hecho a mano por Fer con Claude', 'Hand-built by Fer with Claude')}</span>
+  </div>
+</footer>
+
+<script>
+  // Año
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Tema (el atributo inicial ya se aplicó en un script inline en el head,
+  // respetando localStorage y prefers-color-scheme, para evitar el flash)
+  const themeToggle = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+  const updateThemeLabel = () => {
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    const lang = root.lang;
+    themeToggle.textContent = isDark
+      ? (lang === 'es' ? 'Día' : 'Day')
+      : (lang === 'es' ? 'Noche' : 'Night');
+  };
+  updateThemeLabel();
+  themeToggle.addEventListener('click', () => {
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      root.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+    } else {
+      root.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+    }
+    updateThemeLabel();
+    // Los players de Bandcamp llevan los colores del tema en la URL del
+    // iframe, así que los ya cargados se reconstruyen con la nueva paleta
+    document.querySelectorAll('.bc-player.bc-loaded').forEach(el => buildPlayer(el));
+  });
+
+  // Idioma: el toggle es un enlace a la ruta alterna; solo guardamos la
+  // preferencia para que la home en inglés no redirija de vuelta
+  document.getElementById('lang-toggle').addEventListener('click', () => {
+    localStorage.setItem('lang-pref', root.lang === 'es' ? 'en' : 'es');
+  });
+
+  // Players de Bandcamp (carga perezosa: el iframe solo se crea al pedirlo)
+  const playerColors = () => root.getAttribute('data-theme') === 'dark'
+    ? { bg: '1A1814', link: 'E57B4E' }
+    : { bg: 'EDE7D9', link: '9C3B1F' };
+  const buildPlayer = (holder) => {
+    const { bg, link } = playerColors();
+    const large = holder.dataset.size === 'large';
+    const params = large
+      ? `size=large/bgcol=${bg}/linkcol=${link}/tracklist=true/artwork=small/transparent=true`
+      : `size=small/bgcol=${bg}/linkcol=${link}/transparent=true`;
+    const iframe = document.createElement('iframe');
+    iframe.title = 'Bandcamp player';
+    iframe.loading = 'lazy';
+    iframe.style.cssText = `border:0;width:100%;height:${large ? 472 : 42}px;`;
+    iframe.src = `https://bandcamp.com/EmbeddedPlayer/album=${holder.dataset.album}/${params}/`;
+    holder.replaceChildren(iframe);
+    holder.classList.add('bc-loaded');
+    holder.closest('.release-player')?.classList.add('loaded');
+  };
+  document.querySelectorAll('.release-listen').forEach(btn => {
+    btn.addEventListener('click', () => buildPlayer(btn.parentElement.querySelector('.bc-player')));
+  });
+  document.querySelectorAll('.bc-player[data-autoload]').forEach(el => buildPlayer(el));
+
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('section').forEach(s => {
+    s.classList.add('reveal');
+    io.observe(s);
+  });
+</script>
+
+</body>
+</html>

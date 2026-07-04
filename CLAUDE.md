@@ -4,171 +4,116 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is Fer Isella's personal portfolio website: a static site generated with **Astro 5.x** and managed via **Keystatic**, a local-first headless CMS. The site showcases music releases, collaborators, technology projects (limbo/), and essays, with bilingual (Spanish/English) support and a light/dark theme system.
+This is Fer Isella's personal site: a static, bilingual (Spanish/English) site built with **Astro 5.x** and managed via **Keystatic**, a local-first headless CMS. Positioning is musician-first: Fer as pianist and composer, with limbo/ (his company) as supporting context. The site has a light/dark theme system and embedded Bandcamp players.
 
 ### Key Stack
-- **Astro 5.x** — static site generator with file-based routing
-- **Keystatic** — local-file CMS with web-based admin panel (`/keystatic`)
-- **Zod** — TypeScript schema validation for collections
-- **Astro Content Collections API** — typed data loading with `getCollection()`
+- **Astro 5.x**, static output, file-based routing
+- **Keystatic**, local-file CMS with admin panel at `/keystatic` (dev only)
+- **Zod** schemas for content collections
+- **Fontsource** self-hosted fonts (no Google Fonts requests)
 
 ## Getting Started
 
-### Installation & Development
 ```bash
-npm install                    # Install dependencies
-npm run dev                   # Start dev server (http://localhost:3000)
-npm run build                 # Build static site to dist/
-npm run preview               # Preview production build locally
+npm install                   # Install dependencies (Node >= 22.12.0)
+npm run dev                   # Dev server + Keystatic at /keystatic
+npm run build                 # Static build to dist/
+npm run preview               # Preview the production build
 ```
 
-### Keystatic Admin Panel
-The Keystatic CMS runs at `/keystatic` in dev mode. Edits are saved directly to `src/content/` as JSON files.
+## Architecture
 
-## Architecture & Content Structure
+### Routes (all statically generated)
+
+| Route | Source | Language |
+|---|---|---|
+| `/` | `src/pages/index.astro` | English |
+| `/es/` | `src/pages/es/index.astro` | Spanish |
+| `/music/[slug]/` | `src/pages/music/[slug].astro` | English |
+| `/es/music/[slug]/` | `src/pages/es/music/[slug].astro` | Spanish |
+
+Release slugs come from the JSON filenames in `src/content/releases/` (Astro's `release.id`).
+
+### Internationalization (build-time)
+
+Both languages are **server-rendered at build time**, one page per language, linked with `hreflang` alternates (`en`, `es`, `x-default` pointing to English). There is NO client-side text swapping.
+
+- Pages/components take a `lang: 'en' | 'es'` prop and use a local helper `const t = (es, en) => lang === 'es' ? es : en`.
+- The nav language toggle is a plain link to the alternate-language URL; clicking stores `lang-pref` in localStorage.
+- The English home (`/`) has a small inline script: first-time visitors with a Spanish browser (or stored `lang-pref: es`) are redirected to `/es/`. No other page redirects.
+
+### Layout and components
+
+- `src/layouts/Base.astro` — HTML shell: head (meta, canonical, hreflang, OG/Twitter, theme-color, inline theme script), nav, footer, and all client-side JS (theme toggle, Bandcamp players, reveal-on-scroll). Pages inject extra head tags (JSON-LD, redirect script) via `<Fragment slot="head">`.
+- `src/components/HomeContent.astro` — all home sections (intro, music 01, bio 02, limbo 03), rendered per `lang`.
+- `src/components/ReleaseDetail.astro` — release page body (back link, meta, title, note, large Bandcamp player).
+- `src/lib/schema.ts` — `SITE` constant, `personSchema` (Person JSON-LD, includes César Isella as `parent`), and `albumSchema()` (MusicAlbum JSON-LD per release).
+- `src/styles/global.css` — all styles, imported by Base. CSS custom properties for theming (`--bg`, `--ink`, `--accent`, ...), dark mode via `[data-theme="dark"]`.
 
 ### Content Collections
 
-Collections are defined in `src/content/config.ts` with Zod schemas. Data lives in `src/content/{collection-name}/`:
+Defined in `src/content/config.ts` (Zod), edited via Keystatic (`keystatic.config.ts`) or directly as JSON:
 
-**highlights** (singleton: `src/content/highlights/index.json`)
-- Contains 3 featured items displayed in the intro section
-- Structure: `items: Array<{ title, description?, link? }>`
+- **releases** (`src/content/releases/*.json`): `{ title, year, note_es?, note_en?, tag_es?, tag_en?, bandcamp_id?, bandcamp_url? }`. Sorted by year desc; newest gets `.featured` styling and auto-loads its player. `bandcamp_id` is the numeric album ID for the embedded player. 3 releases have no Bandcamp album (Cucusonic, IF, Los Caminos) and render without player.
+- **collaborators** (`src/content/collaborators/*.json`): `{ name, role_es, role_en }`. Rendered with a priority list first (Eno, Sosa, Herbert, Dear, Ford), then alphabetical.
+- **highlights** (singleton `src/content/highlights/index.json`): `items: [{ label_es?, label_en?, title, description?, link? }]`, the 3 intro threads.
 
-**collaborators** (collection: `src/content/collaborators/`)
-- Individual `.json` files per collaborator (e.g., `pablo-dacal.json`)
-- Used in "Who I've worked with" section
-- Structure: `{ name, role_es, role_en }` (bilingual)
-- Sorted alphabetically by name in render
+**Important**: `getCollection()` returns an array directly. Do NOT call `.all()` on it.
 
-**releases** (collection: `src/content/releases/`)
-- Individual `.json` files per album/EP (e.g., `my-heart.json`)
-- Structure: `{ title, year, note_es?, note_en?, tag_es?, tag_en? }` (bilingual)
-- Sorted by year descending in frontmatter
-- First release (newest) gets `.featured` and `.featured-tag` CSS classes
+### Bandcamp players (client-side)
 
-### Page Structure
+Players are built lazily in Base.astro's script: `.bc-player` holders carry `data-album`, `data-url`, optional `data-size="large"` and `data-autoload`. Colors come from the current theme and are baked into the iframe URL, so loaded players are rebuilt when the theme toggles. Home rows show a "Listen/Escuchar" button; the featured release and release pages auto-load.
 
-**src/pages/index.astro** (main portfolio page, ~780 lines)
-- Frontmatter (lines 2–11): Imports all collections via `getCollection()`
-- Intro section (lines 688–708): Features top 3 highlights
-- Bio section (lines 711–820): Personal narrative + dynamic collaborators list
-- Music section (lines 823–947): Discography + production credits
-- Limbo section (lines 884–913): Company overview
-- Footer (lines 918–949): Links and contact
-- Script section (lines 985–1090): Theme/language toggle, reveal-on-scroll animation
+### Fonts
 
-**Fonts**
-- Self-hosted via Fontsource (`@fontsource-variable/fraunces`, `@fontsource/spectral`, `@fontsource-variable/jetbrains-mono`), imported in the frontmatter of `index.astro`. No Google Fonts requests at runtime. Variable families use the `Variable` suffix in CSS (`'Fraunces Variable'`, `'JetBrains Mono Variable'`).
+Self-hosted via Fontsource, imported in `Base.astro`. Variable families use the `Variable` suffix in CSS: `'Fraunces Variable'` (needs `full.css` for the SOFT/opsz axes), `'JetBrains Mono Variable'`. Spectral is static (300/400/500 + italics).
 
-## Important Patterns
+### Keystatic dev-only integration
 
-### Dynamic Content Rendering
-All hardcoded content sections use `.map()` over collection data. The frontmatter sorts before render:
-```ts
-const releasesList = releases.sort((a, b) => b.data.year - a.data.year);
-const collaboratorsList = collaborators.sort((a, b) =>
-  a.data.name.localeCompare(b.data.name)
-);
-```
-
-Bilingual fields propagate as `data-es` / `data-en` attributes, so the in-browser language toggle keeps working:
-```astro
-{releasesList.map((release, index) => (
-  <article class={`release ${index === 0 ? 'featured' : ''}`}>
-    <div class="release-year">{release.data.year}</div>
-    <div class="release-title">{release.data.title}</div>
-    <div class="release-note"
-      data-es={release.data.note_es}
-      data-en={release.data.note_en}>
-      {release.data.note_en || release.data.note_es}
-    </div>
-  </article>
-))}
-```
-
-**Important**: `getCollection()` returns an array directly — do NOT call `.all()` on it (that method does not exist).
-
-### Bilingual Support
-- All UI text uses `data-es` and `data-en` attributes
-- JavaScript `toggle-language()` function switches visibility via CSS `:lang()` pseudo-classes
-- JSON content (from Keystatic) does **not** have i18n attributes; it directly surfaces the data
-
-### Styling
-- CSS custom properties for theming: `--bg`, `--bg-alt`, `--text`, `--rule`, `--display`, etc.
-- Dark mode via `prefers-color-scheme` media query + manual toggle with `--theme-dark` attribute on `<html>`
-- Language-aware CSS: `.thread[lang="es"] .thread-label` for localized styling
-
-### Client-Side Functionality
-- Theme toggle: click → localStorage → CSS attribute
-- Language toggle: click → localStorage → CSS attribute  
-- Reveal-on-scroll: Intersection Observer for fade-in animations on `.reveal` elements
-- No build-time i18n processing; all translation happens in the browser
-
-## Keystatic Migration (Complete)
-
-Three major sections converted from hardcoded HTML to dynamic rendering:
-
-1. **Intro threads** (highlights singleton) — `highlightsData.map()`
-2. **Collaborators list** (18 entries) — `collaboratorsList.map()` with bilingual roles
-3. **Discography** (10 releases) — `releasesList.map()`, sorted by year desc, bilingual notes/tags
-
-### Build-time vs dev-time integration
-
-Keystatic's Astro integration injects server-rendered routes (the `/keystatic` admin). For a purely static Cloudflare Pages deploy, `astro.config.mjs` only loads Keystatic when the Astro CLI is NOT running `build`:
+Keystatic injects server-rendered routes, so `astro.config.mjs` loads it ONLY for `astro dev`. `build` and `preview` stay fully static, no adapter needed:
 
 ```js
-const isBuild = process.argv.includes('build');
-export default defineConfig({
-  integrations: isBuild ? [] : [keystatic()],
-});
+const isDev = process.argv.includes('dev');
+integrations: isDev ? [react(), keystatic(), sitemap()] : [sitemap()],
 ```
 
-This keeps `/keystatic` available in `npm run dev`, and keeps `npm run build` fully static (no adapter required).
+## Deployment (Cloudflare)
 
-## Deployment (Cloudflare Pages)
+Static deploy of `dist/` (wrangler.toml assets config / Cloudflare Pages). Build command `npm run build`, output `dist`, Node 22. Sitemap is generated by @astrojs/sitemap; robots.txt lives in `public/`.
 
-1. Push repo to GitHub
-2. In Cloudflare Pages → Create project → Connect GitHub repo
-3. Build settings:
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-   - Node version: `22` (project requires `>=22.12.0`)
-4. After first deploy, add custom domain in Pages → Custom domains.
-
-Because Keystatic is excluded from `astro build`, no adapter is needed — the build is fully static.
-
-## File Map (Relevant Paths)
+## File Map
 
 ```
 src/
+├── layouts/
+│   └── Base.astro          # HTML shell, head/meta/hreflang, nav, footer, JS
+├── components/
+│   ├── HomeContent.astro   # Home sections, bilingual via lang prop
+│   └── ReleaseDetail.astro # Release page body
+├── lib/
+│   └── schema.ts           # JSON-LD (Person, MusicAlbum) + SITE constant
+├── styles/
+│   └── global.css          # All styles, theme variables
 ├── pages/
-│   └── index.astro         # Main portfolio page (styles + scripts inline)
+│   ├── index.astro         # EN home (+ es-redirect script)
+│   ├── es/index.astro      # ES home
+│   ├── music/[slug].astro  # EN release pages
+│   └── es/music/[slug].astro # ES release pages
 └── content/
     ├── config.ts           # Collection schemas
-    ├── highlights/
-    │   └── index.json      # Featured items (singleton)
-    ├── collaborators/
-    │   └── *.json          # Individual collaborator files
-    └── releases/
-        └── *.json          # Individual release files
+    ├── highlights/index.json
+    ├── collaborators/*.json
+    └── releases/*.json
 
-public/               # Static assets (favicon, og-image, robots.txt)
-astro.config.mjs      # Astro config + Keystatic integration
-keystatic.config.ts   # Keystatic CMS field definitions
+public/                # favicons, og-image.jpg, robots.txt
+astro.config.mjs       # site URL, sitemap, dev-only Keystatic
+keystatic.config.ts    # CMS field definitions
 ```
-
-## Common Commands
-
-- `npm run dev` — develop with hot reload and Keystatic at `/keystatic`
-- `npm run build` — production build
-- `npm run preview` — test production build locally
-- Edit `src/content/**/*.json` directly or via Keystatic UI
 
 ## Notes for Future Work
 
-- The page has minimal dependencies; focus is on **content-driven architecture**, not component libraries
-- Theme and language state persist to localStorage; theme preference also respects system setting
-- Keystatic runs only in dev; production is purely static HTML/CSS/JS
-- All collection sorting (by year, alphabetical) happens in component render logic, not in queries
-- No API routes or backend; data flows: Keystatic → JSON files → `getCollection()` → frontmatter → template rendering
+- Musician-first framing is deliberate: keep music leading in copy, order, and metadata.
+- Theme persists to localStorage and respects `prefers-color-scheme`; an inline head script applies it pre-paint (no flash).
+- Animations respect `prefers-reduced-motion`.
+- All collection sorting happens in component render logic, not in queries.
+- No API routes or backend; data flows: Keystatic → JSON → `getCollection()` → static HTML.

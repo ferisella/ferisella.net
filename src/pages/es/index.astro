@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import HomeContent from '../../components/HomeContent.astro';
+import { personSchema } from '../../lib/schema';
+---
+
+<Base
+  lang="es"
+  title="Fer Isella · Pianista y compositor. Piano y código."
+  description="Pianista y compositor nominado al Latin Grammy. Autor de My Father's Heart y My Heart, publicados en The Piano Label. Cofundador de limbo/, infraestructura para la música independiente. Vive en Madrid."
+  path="/"
+  ogType="profile"
+  ogTitle="Fer Isella · Entre el piano y el código"
+  ogDescription="Pianista y compositor nominado al Latin Grammy. My Father's Heart, My Heart, The Piano Label. Cofundador de limbo/, infraestructura para la música independiente. Madrid."
+>
+  <Fragment slot="head">
+    <meta property="profile:first_name" content="Fer">
+    <meta property="profile:last_name" content="Isella">
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+  </Fragment>
+  <HomeContent lang="es" />
+</Base>
