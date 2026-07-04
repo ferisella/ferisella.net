@@ -58,8 +58,8 @@ Collections are defined in `src/content/config.ts` with Zod schemas. Data lives 
 - Footer (lines 918–949): Links and contact
 - Script section (lines 985–1090): Theme/language toggle, reveal-on-scroll animation
 
-**Components**
-- `src/components/Highlights.astro` — reusable pattern for rendering collection items with title, description, and link
+**Fonts**
+- Self-hosted via Fontsource (`@fontsource-variable/fraunces`, `@fontsource/spectral`, `@fontsource-variable/jetbrains-mono`), imported in the frontmatter of `index.astro`. No Google Fonts requests at runtime. Variable families use the `Variable` suffix in CSS (`'Fraunces Variable'`, `'JetBrains Mono Variable'`).
 
 ## Important Patterns
 
@@ -143,24 +143,19 @@ Because Keystatic is excluded from `astro build`, no adapter is needed — the b
 ```
 src/
 ├── pages/
-│   └── index.astro         # Main portfolio page
-├── components/
-│   └── Highlights.astro    # Reusable item renderer
-├── content/
-│   ├── config.ts           # Collection schemas
-│   ├── highlights/
-│   │   └── index.json      # Featured items (singleton)
-│   ├── collaborators/
-│   │   └── *.json          # Individual collaborator files
-│   └── releases/
-│       └── *.json          # Individual release files
-├── styles/
-│   └── global.css          # Theme variables, base styles
-└── layouts/
-    └── ... (if any)
+│   └── index.astro         # Main portfolio page (styles + scripts inline)
+└── content/
+    ├── config.ts           # Collection schemas
+    ├── highlights/
+    │   └── index.json      # Featured items (singleton)
+    ├── collaborators/
+    │   └── *.json          # Individual collaborator files
+    └── releases/
+        └── *.json          # Individual release files
 
-public/               # Static assets (favicon, fonts, etc.)
+public/               # Static assets (favicon, og-image, robots.txt)
 astro.config.mjs      # Astro config + Keystatic integration
+keystatic.config.ts   # Keystatic CMS field definitions
 ```
 
 ## Common Commands

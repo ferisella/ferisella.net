@@ -79,6 +79,14 @@ export default config({
       schema: {
         items: fields.array(
           fields.object({
+            label_es: fields.text({
+              label: 'Category label (Spanish)',
+              description: 'e.g., "Álbum", "Tecnología", "Ensayo"',
+            }),
+            label_en: fields.text({
+              label: 'Category label (English)',
+              description: 'e.g., "Album", "Technology", "Essay"',
+            }),
             title: fields.text({
               label: 'Title',
               validation: { length: { min: 1 } },

@@ -1,5 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
+import '@fontsource-variable/fraunces/full.css';
+import '@fontsource-variable/fraunces/full-italic.css';
+import '@fontsource/spectral/300.css';
+import '@fontsource/spectral/400.css';
+import '@fontsource/spectral/500.css';
+import '@fontsource/spectral/300-italic.css';
+import '@fontsource/spectral/400-italic.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
 
 const highlights = await getCollection('highlights');
 const releases = await getCollection('releases');
@@ -64,6 +72,14 @@ const collaboratorsList = [
   "alumniOf": [
     { "@type": "CollegeOrUniversity", "name": "Berklee College of Music" }
   ],
+  "parent": {
+    "@type": "Person",
+    "name": "César Isella",
+    "sameAs": [
+      "https://es.wikipedia.org/wiki/C%C3%A9sar_Isella",
+      "https://en.wikipedia.org/wiki/C%C3%A9sar_Isella"
+    ]
+  },
   "award": [
     "Latin Grammy Nomination",
     "British Council Young Creative Entrepreneur of the Year (×2)",
@@ -84,9 +100,17 @@ const collaboratorsList = [
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,30..100;1,9..144,300..700,30..100&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#F4EFE4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#13110D" media="(prefers-color-scheme: dark)">
+<script is:inline>
+  (function () {
+    var saved = localStorage.getItem('theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved === 'dark' || (!saved && prefersDark)) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>
 <style>
   :root {
     --bg: #F4EFE4;
@@ -98,8 +122,8 @@ const collaboratorsList = [
     --accent: #9C3B1F;
     --accent-soft: #B54B2C;
     --serif: 'Spectral', Georgia, serif;
-    --display: 'Fraunces', 'Spectral', Georgia, serif;
-    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --display: 'Fraunces Variable', 'Spectral', Georgia, serif;
+    --mono: 'JetBrains Mono Variable', ui-monospace, monospace;
   }
   [data-theme="dark"] {
     --bg: #13110D;
@@ -365,7 +389,6 @@ const collaboratorsList = [
     font-style: normal;
   }
   .thread:hover .thread-title { color: var(--accent); }
-  .thread { transition: none; }
   .thread-title { transition: color 200ms ease; }
 
   /* ---------- BIO ---------- */
@@ -524,93 +547,6 @@ const collaboratorsList = [
     border-bottom-color: var(--accent);
   }
 
-  /* ---------- ESCRITURA ---------- */
-  .essays {
-    display: grid;
-    gap: 0;
-  }
-  .essay {
-    display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 40px;
-    padding: 32px 0;
-    border-bottom: 1px solid var(--rule);
-    text-decoration: none;
-    color: inherit;
-    transition: background 180ms ease;
-  }
-  .essay:first-child { border-top: 1px solid var(--rule); }
-  .essay:hover { background: var(--bg-alt); margin: 0 -24px; padding: 32px 24px; }
-  .essay-meta {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-mute);
-    line-height: 1.6;
-  }
-  .essay-meta .topic { color: var(--accent); display: block; margin-top: 6px; }
-  .essay-body h4 {
-    font-family: var(--display);
-    font-weight: 300;
-    font-size: 24px;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-    font-style: italic;
-    margin-bottom: 10px;
-    font-variation-settings: "opsz" 72;
-  }
-  .essay-body p {
-    font-size: 15.5px;
-    line-height: 1.6;
-    color: var(--ink-soft);
-    max-width: 58ch;
-  }
-
-  .substack-cta {
-    margin-top: 60px;
-    padding: 38px 0;
-    border-top: 1px solid var(--rule);
-    border-bottom: 1px solid var(--rule);
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    align-items: flex-start;
-  }
-  .substack-cta p {
-    font-family: var(--display);
-    font-weight: 300;
-    font-size: clamp(22px, 2.4vw, 30px);
-    line-height: 1.25;
-    max-width: 28ch;
-    font-variation-settings: "opsz" 144;
-  }
-  .substack-cta p em { color: var(--accent); font-style: italic; }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--ink);
-    background: transparent;
-    border: 1px solid var(--ink);
-    padding: 14px 22px;
-    text-decoration: none;
-    transition: all 200ms ease;
-  }
-  .btn:hover {
-    background: var(--ink);
-    color: var(--bg);
-  }
-  .btn .arrow {
-    display: inline-block;
-    transition: transform 200ms ease;
-  }
-  .btn:hover .arrow { transform: translateX(4px); }
-
   /* ---------- AFILIACIONES ---------- */
   .affil-list {
     list-style: none;
@@ -730,6 +666,20 @@ const collaboratorsList = [
     opacity: 1;
     transform: translateY(0);
   }
+
+  /* ---------- Movimiento reducido ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .intro-ekg path {
+      animation: none;
+      stroke-dashoffset: 0;
+    }
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
 </style>
 </head>
 <body>
@@ -744,9 +694,9 @@ const collaboratorsList = [
     <a href="https://www.youtube.com/@ferisella" target="_blank" rel="noopener" data-es="Podcast" data-en="Podcast">Podcast</a>
   </div>
   <div class="nav-tools">
-    <button id="lang-toggle" data-lang="EN">EN / ES</button>
-    <span class="sep">·</span>
-    <button id="theme-toggle">Night</button>
+    <button id="lang-toggle" data-lang="EN" aria-label="Switch language / Cambiar idioma">EN / ES</button>
+    <span class="sep" aria-hidden="true">·</span>
+    <button id="theme-toggle" aria-label="Toggle light and dark theme">Night</button>
   </div>
 </nav>
 
@@ -767,7 +717,7 @@ const collaboratorsList = [
     <div class="intro-threads">
       {highlightsData.map((item) => (
         <a href={item.link || '#'} class="thread">
-          <div class="thread-label">{item.title}</div>
+          <div class="thread-label" data-es={item.label_es} data-en={item.label_en}>{item.label_en || item.label_es}</div>
           <div class="thread-title">{item.title}</div>
           <div class="thread-meta">{item.description}</div>
         </a>
@@ -970,11 +920,10 @@ const collaboratorsList = [
   // Año
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  // Tema
+  // Tema (el atributo inicial ya se aplicó en un script inline en el head,
+  // respetando localStorage y prefers-color-scheme, para evitar el flash)
   const themeToggle = document.getElementById('theme-toggle');
   const root = document.documentElement;
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  if (savedTheme === 'dark') root.setAttribute('data-theme', 'dark');
   const updateThemeLabel = () => {
     const isDark = root.getAttribute('data-theme') === 'dark';
     const lang = document.documentElement.lang;

@@ -1,16 +1,22 @@
 {
   "items": [
     {
+      "label_es": "Álbum",
+      "label_en": "Album",
       "title": "My Heart",
       "description": "Album with remixes by Herbert, Dear, Ford, Lidell",
       "link": "#musica"
     },
     {
+      "label_es": "Tecnología",
+      "label_en": "Technology",
       "title": "limbo/Chat",
       "description": "MCP server and custom LLM integrations",
       "link": "#limbo"
     },
     {
+      "label_es": "Ensayo",
+      "label_en": "Essay",
       "title": "Forbidden Songs",
       "description": "Essay exploring music and storytelling",
       "link": "https://themusicofconversation.substack.com"

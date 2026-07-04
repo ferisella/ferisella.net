@@ -26,6 +26,8 @@ const highlights = defineCollection({
   schema: z.object({
     items: z.array(
       z.object({
+        label_es: z.string().optional(),
+        label_en: z.string().optional(),
         title: z.string(),
         description: z.string().optional(),
         link: z.string().optional(),

@@ -4,10 +4,12 @@ import keystatic from '@keystatic/astro';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 
-const isBuild = process.argv.includes('build');
+// Keystatic injects server-rendered routes, so it only loads in `astro dev`.
+// `build` and `preview` stay fully static (no adapter needed).
+const isDev = process.argv.includes('dev');
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://ferisella.net',
-  integrations: isBuild ? [sitemap()] : [react(), keystatic(), sitemap()],
+  integrations: isDev ? [react(), keystatic(), sitemap()] : [sitemap()],
 });
